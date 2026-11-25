@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TaskPulse — Project Task & Payout Tracker</title>
+  <title>Project Task & Payout Tracker</title>
 
-  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -18,7 +18,7 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
@@ -28,11 +28,6 @@
               850: '#0F1524',
               800: '#111827',
               700: '#1E293B',
-            },
-            brand: {
-              500: '#6366F1',
-              600: '#4F46E5',
-              400: '#818CF8',
             }
           }
         }
@@ -40,21 +35,21 @@
     };
   </script>
 
-  <!-- Chart.js -->
+  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
   <style>
-    /* Tabular numbers so counters and currencies never jitter on update */
+    /* Tabular numerals prevent layout shift as task counts & payouts update */
     .tabular-nums {
       font-variant-numeric: tabular-nums;
     }
 
-    /* Subtle top ambient glow in dark mode */
+    /* Ambient radial glow backgrounds for Dark & Light modes */
     .dark body {
       background-color: #0B0F19;
       background-image:
-        radial-gradient(ellipse 80% 45% at 50% -15%, rgba(99, 102, 241, 0.14), transparent),
-        radial-gradient(ellipse 50% 35% at 85% 10%, rgba(16, 185, 129, 0.06), transparent);
+        radial-gradient(ellipse 80% 45% at 50% -15%, rgba(99, 102, 241, 0.16), transparent),
+        radial-gradient(ellipse 55% 35% at 88% 8%, rgba(6, 182, 212, 0.08), transparent);
       background-attachment: fixed;
     }
 
@@ -65,17 +60,17 @@
       background-attachment: fixed;
     }
 
-    /* Counter bump micro-animation */
+    /* Micro-animation when stepping task counters */
     @keyframes counterPop {
       0% { transform: scale(1); }
-      40% { transform: scale(1.14); }
+      40% { transform: scale(1.15); }
       100% { transform: scale(1); }
     }
     .animate-pop {
       animation: counterPop 0.24s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* Custom sleek scrollbar */
+    /* Sleek custom scrollbars */
     ::-webkit-scrollbar {
       width: 7px;
       height: 7px;
@@ -91,7 +86,7 @@
       background: rgba(148, 163, 184, 0.45);
     }
 
-    /* Hide number input spin buttons for cleaner UI */
+    /* Hide native number input spinners */
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -104,63 +99,87 @@
 </head>
 <body class="font-sans text-slate-900 dark:text-slate-100 antialiased min-h-screen flex flex-col transition-colors duration-200 selection:bg-indigo-500 selection:text-white">
 
-  <!-- Sticky Top Navigation Bar -->
-  <header class="sticky top-0 z-30 backdrop-blur-xl bg-white/80 dark:bg-[#0B0F19]/80 border-b border-slate-200/80 dark:border-white/[0.08] transition-colors">
+  <!-- Hidden File Input for CSV / JSON Import -->
+  <input type="file" id="importFileInput" accept=".csv,.json,text/csv,application/json" class="hidden" />
+
+  <!-- =====================================================================
+       STICKY TOP NAVIGATION BAR
+  ====================================================================== -->
+  <header class="sticky top-0 z-30 backdrop-blur-xl bg-white/85 dark:bg-[#0B0F19]/85 border-b border-slate-200/80 dark:border-white/[0.08] transition-colors">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-wrap items-center justify-between gap-3 py-3.5">
 
-        <!-- Brand & Auto-Save Status -->
-        <div class="flex items-center gap-3.5">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25 text-white shrink-0">
+        <!-- Brand & Live Sync Status Pill -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-indigo-500/25 text-white shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
             </svg>
           </div>
           <div>
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center flex-wrap gap-2">
               <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">
                 Project Task & Payout Tracker
               </h1>
+              <!-- Interactive Sync Status Pill -->
+              <button id="syncStatusPill" type="button" title="Configure Cross-Device Cloud Sync"
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition cursor-pointer bg-slate-100 dark:bg-slate-800/90 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/[0.08] hover:border-indigo-500/40">
+                <span id="syncStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                <span id="syncStatusLabel">Local Only</span>
+              </button>
             </div>
-            <div id="saveStatusBadge" class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              <span id="saveStatusDot" class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-              <span id="saveStatusText">All changes saved locally</span>
-            </div>
+            <p id="subHeaderMeta" class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+              All amounts stored in USD • Instant auto-save enabled
+            </p>
           </div>
         </div>
 
-        <!-- Right Controls: Currency, Theme, Export, New Project -->
-        <div class="flex items-center flex-wrap gap-2 sm:gap-2.5">
-          <!-- Currency Selector -->
-          <div class="relative">
-            <label for="currencySelect" class="sr-only">Currency</label>
-            <select id="currencySelect" aria-label="Select Currency"
-              class="appearance-none cursor-pointer h-9 pl-3 pr-8 rounded-xl text-xs sm:text-sm font-semibold font-mono bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/[0.08] focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition">
-              <option value="USD">$ USD</option>
-              <option value="BDT">৳ BDT</option>
-              <option value="EUR">€ EUR</option>
-              <option value="GBP">£ GBP</option>
-            </select>
-            <svg class="w-3.5 h-3.5 text-slate-400 pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        <!-- Right Toolbar Controls -->
+        <div class="flex items-center flex-wrap gap-2">
+
+          <!-- Cloud Sync Button -->
+          <button id="openSyncModalBtn" type="button"
+            class="h-9 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/25 transition cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
             </svg>
+            <span>Cloud Sync</span>
+          </button>
+
+          <!-- Currency Display Switcher + Editable Rate -->
+          <div class="flex items-center gap-1">
+            <div class="relative">
+              <label for="currencySelect" class="sr-only">Display Currency</label>
+              <select id="currencySelect" aria-label="Display Currency"
+                class="appearance-none cursor-pointer h-9 pl-3 pr-7 rounded-xl text-xs font-semibold font-mono bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/[0.08] focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition">
+                <option value="USD">$ USD</option>
+                <option value="BDT">৳ BDT</option>
+                <option value="EUR">€ EUR</option>
+                <option value="GBP">£ GBP</option>
+              </select>
+              <svg class="w-3.5 h-3.5 text-slate-400 pointer-events-none absolute right-2 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+
+            <!-- Editable Conversion Rate Pill (Visible when currency != USD) -->
+            <button id="editRateBtn" type="button" title="Click to adjust USD conversion rate"
+              class="hidden h-9 px-2.5 rounded-xl text-[11px] font-mono font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 transition cursor-pointer">
+              1 USD = <span id="activeRateDisplay">120</span> <span id="activeRateCode">BDT</span>
+            </button>
           </div>
 
-          <!-- Theme Toggle -->
-          <button id="themeToggleBtn" type="button" title="Toggle Dark / Light Mode" aria-label="Toggle theme"
-            class="h-9 w-9 rounded-xl flex items-center justify-center bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer">
-            <!-- Sun Icon (shown in dark mode) -->
-            <svg id="sunIcon" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          <!-- Import CSV / JSON -->
+          <button id="importBtn" type="button" title="Import CSV or JSON file"
+            class="h-9 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer">
+            <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
-            <!-- Moon Icon (shown in light mode) -->
-            <svg id="moonIcon" class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
+            <span class="hidden sm:inline">Import</span>
           </button>
 
           <!-- Export CSV -->
-          <button id="exportCsvBtn" type="button"
+          <button id="exportCsvBtn" type="button" title="Download CSV spreadsheet"
             class="h-9 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer">
             <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -169,14 +188,15 @@
             <span class="sm:hidden">CSV</span>
           </button>
 
-          <!-- Export JSON -->
-          <button id="exportJsonBtn" type="button"
-            class="h-9 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer">
-            <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+          <!-- Dark / Light Theme Toggle -->
+          <button id="themeToggleBtn" type="button" title="Toggle Dark / Light Theme" aria-label="Toggle theme"
+            class="h-9 w-9 rounded-xl flex items-center justify-center bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer">
+            <svg class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
-            <span class="hidden sm:inline">Export JSON</span>
-            <span class="sm:hidden">JSON</span>
+            <svg class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
           </button>
 
           <!-- + New Project Primary CTA -->
@@ -193,50 +213,52 @@
     </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- =====================================================================
+       MAIN DASHBOARD CONTENT
+  ====================================================================== -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
-    <!-- 1. Executive KPI Summary Bento Row (4 Cards) -->
+    <!-- 1. Executive KPI Bento Cards (4 Cards) -->
     <section aria-label="Executive Summary" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
 
       <!-- KPI 1: Total Tasks Completed -->
-      <div class="rounded-2xl p-5 bg-white dark:bg-[#111827]/90 border border-slate-200/90 dark:border-white/[0.08] shadow-sm hover:border-indigo-500/30 transition">
+      <div class="rounded-2xl p-5 bg-white/90 dark:bg-[#111827]/90 backdrop-blur-md border border-slate-200/90 dark:border-white/[0.08] shadow-sm hover:border-indigo-500/30 transition">
         <div class="flex items-center justify-between mb-3">
           <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Tasks Completed</span>
-          <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
         </div>
         <div id="kpiTotalTasks" class="text-3xl font-bold font-mono tabular-nums tracking-tight text-slate-900 dark:text-white">
-          0
+          128
         </div>
-        <p id="kpiTasksSub" class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5">
-          Across 0 projects
+        <p id="kpiTasksSub" class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+          1 active • 6 paid • 7 total
         </p>
       </div>
 
       <!-- KPI 2: Total Expected Payout -->
-      <div class="rounded-2xl p-5 bg-white dark:bg-[#111827]/90 border border-slate-200/90 dark:border-white/[0.08] shadow-sm hover:border-indigo-500/30 transition">
+      <div class="rounded-2xl p-5 bg-white/90 dark:bg-[#111827]/90 backdrop-blur-md border border-slate-200/90 dark:border-white/[0.08] shadow-sm hover:border-indigo-500/30 transition">
         <div class="flex items-center justify-between mb-3">
           <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Expected Payout</span>
-          <div class="w-8 h-8 rounded-xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
           </div>
         </div>
         <div id="kpiExpectedPayout" class="text-3xl font-bold font-mono tabular-nums tracking-tight text-slate-900 dark:text-white">
-          $0.00
+          $763.00
         </div>
         <p id="kpiExpectedSub" class="text-xs text-slate-500 dark:text-slate-400 mt-2">
-          Avg $0.00 per task
+          Avg $5.96 per task
         </p>
       </div>
 
       <!-- KPI 3: Payout Received + Collection Progress Bar -->
-      <div class="rounded-2xl p-5 bg-white dark:bg-[#111827]/90 border border-slate-200/90 dark:border-white/[0.08] shadow-sm hover:border-emerald-500/30 transition">
+      <div class="rounded-2xl p-5 bg-white/90 dark:bg-[#111827]/90 backdrop-blur-md border border-slate-200/90 dark:border-white/[0.08] shadow-sm hover:border-emerald-500/30 transition">
         <div class="flex items-center justify-between mb-3">
           <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Payout Received</span>
           <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
@@ -247,23 +269,23 @@
         </div>
         <div class="flex items-baseline justify-between gap-2">
           <div id="kpiReceivedPayout" class="text-3xl font-bold font-mono tabular-nums tracking-tight text-emerald-600 dark:text-emerald-400">
-            $0.00
+            $683.00
           </div>
           <span id="kpiCollectionPct" class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-            0%
+            89.5%
           </span>
         </div>
         <div class="w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden mt-3">
-          <div id="kpiCollectionBar" class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width: 0%"></div>
+          <div id="kpiCollectionBar" class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width: 89.5%"></div>
         </div>
       </div>
 
       <!-- KPI 4: Pending Payout (Warm Amber Accent) -->
-      <div class="rounded-2xl p-5 bg-white dark:bg-[#111827]/90 border border-amber-500/25 dark:border-amber-500/25 shadow-sm relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-amber-500/[0.04] to-transparent pointer-events-none"></div>
+      <div class="rounded-2xl p-5 bg-white/90 dark:bg-[#111827]/90 backdrop-blur-md border border-amber-500/30 shadow-sm relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-amber-500/[0.06] to-transparent pointer-events-none"></div>
         <div class="relative">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400/90">Pending Payout</span>
+            <span class="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400">Pending Payout</span>
             <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -271,56 +293,56 @@
             </div>
           </div>
           <div id="kpiPendingPayout" class="text-3xl font-bold font-mono tabular-nums tracking-tight text-amber-600 dark:text-amber-400">
-            $0.00
+            $80.00
           </div>
           <p id="kpiPendingSub" class="text-xs text-slate-500 dark:text-slate-400 mt-2">
-            0 projects awaiting payout
+            1 project with unpaid balance
           </p>
         </div>
       </div>
 
     </section>
 
-    <!-- 2. Visual Analytics & Insights Section -->
+    <!-- 2. Interactive Visual Analytics (Chart.js) -->
     <section aria-label="Visual Analytics" class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
 
       <!-- Chart 1: Earnings & Payout Status by Project (Stacked Bar) -->
-      <div class="lg:col-span-7 rounded-2xl p-5 sm:p-6 bg-white dark:bg-[#111827]/90 border border-slate-200/90 dark:border-white/[0.08] shadow-sm flex flex-col justify-between">
+      <div class="lg:col-span-7 rounded-2xl p-5 sm:p-6 bg-white/90 dark:bg-[#111827]/90 backdrop-blur-md border border-slate-200/90 dark:border-white/[0.08] shadow-sm flex flex-col justify-between">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div>
             <h2 class="text-base font-bold text-slate-900 dark:text-white">Earnings & Payout Status by Project</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Comparing collected payouts vs. remaining pending balance</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Comparing received payouts vs. remaining pending balance</p>
           </div>
           <div class="flex items-center gap-3 text-xs font-medium">
             <span class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
-              <span class="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block"></span> Received
+              <span class="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block"></span> Payout Received
             </span>
             <span class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
-              <span class="w-2.5 h-2.5 rounded-sm bg-amber-500 inline-block"></span> Pending
+              <span class="w-2.5 h-2.5 rounded-sm bg-amber-500 inline-block"></span> Pending Payout
             </span>
           </div>
         </div>
-        <div class="relative w-full h-[250px] sm:h-[275px]">
+        <div class="relative w-full h-[255px] sm:h-[280px]">
           <canvas id="payoutBarChart"></canvas>
         </div>
       </div>
 
-      <!-- Chart 2: Task & Revenue Distribution (Doughnut + Insight Badges) -->
-      <div class="lg:col-span-5 rounded-2xl p-5 sm:p-6 bg-white dark:bg-[#111827]/90 border border-slate-200/90 dark:border-white/[0.08] shadow-sm flex flex-col justify-between">
+      <!-- Chart 2: Portfolio Share & Insights (Doughnut + Live Chips) -->
+      <div class="lg:col-span-5 rounded-2xl p-5 sm:p-6 bg-white/90 dark:bg-[#111827]/90 backdrop-blur-md border border-slate-200/90 dark:border-white/[0.08] shadow-sm flex flex-col justify-between">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div>
-            <h2 class="text-base font-bold text-slate-900 dark:text-white">Distribution & Insights</h2>
-            <p id="doughnutSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Share of completed tasks across projects</p>
+            <h2 class="text-base font-bold text-slate-900 dark:text-white">Portfolio Share & Insights</h2>
+            <p id="doughnutSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Share of expected earnings by project</p>
           </div>
-          <!-- Segmented Toggle: Tasks vs Earnings -->
+          <!-- Toggle Tabs: By Earnings vs By Tasks -->
           <div class="inline-flex p-0.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-white/[0.06]">
-            <button id="modeTasksBtn" type="button"
-              class="px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm">
-              Tasks
-            </button>
             <button id="modeEarningsBtn" type="button"
+              class="px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm">
+              By Earnings
+            </button>
+            <button id="modeTasksBtn" type="button"
               class="px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-              Earnings
+              By Tasks
             </button>
           </div>
         </div>
@@ -329,7 +351,7 @@
           <canvas id="distributionDoughnutChart"></canvas>
         </div>
 
-        <!-- Key Insight Badges -->
+        <!-- Live Insight Chips -->
         <div class="grid grid-cols-3 gap-2 pt-4 mt-4 border-t border-slate-100 dark:border-white/[0.06]">
           <div class="rounded-xl p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/[0.04]">
             <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Top Earner</div>
@@ -337,25 +359,25 @@
             <div id="insightTopEarnerVal" class="text-[11px] font-mono text-indigo-600 dark:text-indigo-400 mt-0.5">$0</div>
           </div>
           <div class="rounded-xl p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/[0.04]">
-            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Best Rate/Task</div>
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Best Rate / Task</div>
             <div id="insightBestRateProject" class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate mt-0.5">—</div>
             <div id="insightBestRateVal" class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">$0/task</div>
           </div>
           <div class="rounded-xl p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/[0.04]">
-            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Collected</div>
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Collection Rate</div>
             <div id="insightCollectionRate" class="text-sm font-bold font-mono text-slate-800 dark:text-slate-100 mt-0.5">0%</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">of expected</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">collected</div>
           </div>
         </div>
       </div>
 
     </section>
 
-    <!-- 3. Interactive Project Tracker Controls & Grid -->
+    <!-- 3. Project Cards Grid & Controls -->
     <section aria-label="Projects List" class="space-y-4">
 
-      <!-- Filter Pills, Search & Sort Bar -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white dark:bg-[#111827]/90 p-3.5 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm">
+      <!-- Filter Pills, Live Search & Sort Dropdown -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white/90 dark:bg-[#111827]/90 backdrop-blur-md p-3.5 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm">
         
         <!-- Filter Pills -->
         <div id="filterPills" class="flex items-center flex-wrap gap-1.5">
@@ -371,9 +393,12 @@
           <button type="button" data-filter="Paid" class="filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700/80">
             Paid <span class="ml-1 opacity-75 font-mono" id="count-Paid">0</span>
           </button>
+          <button type="button" data-filter="On Hold" class="filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700/80">
+            On Hold <span class="ml-1 opacity-75 font-mono" id="count-On Hold">0</span>
+          </button>
         </div>
 
-        <!-- Search & Sort -->
+        <!-- Live Search & Sort -->
         <div class="flex items-center gap-2.5">
           <div class="relative flex-1 sm:w-56">
             <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -386,10 +411,10 @@
           <div class="relative">
             <select id="sortSelect" aria-label="Sort projects"
               class="appearance-none cursor-pointer h-9 pl-3 pr-8 rounded-xl text-xs sm:text-sm font-medium bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-white/[0.06] focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition">
-              <option value="recent">Recently Updated</option>
-              <option value="pending">Highest Pending</option>
-              <option value="tasks">Most Tasks</option>
-              <option value="payout">Highest Payout</option>
+              <option value="pending">Sort: Pending Balance</option>
+              <option value="tasks">Sort: Most Tasks</option>
+              <option value="payout">Sort: Highest Payout</option>
+              <option value="name">Sort: Project Name</option>
             </select>
             <svg class="w-3.5 h-3.5 text-slate-400 pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -405,7 +430,7 @@
       </div>
 
       <!-- Empty State -->
-      <div id="emptyState" class="hidden rounded-2xl p-10 text-center bg-white dark:bg-[#111827]/90 border border-dashed border-slate-300 dark:border-white/[0.12]">
+      <div id="emptyState" class="hidden rounded-2xl p-10 text-center bg-white/90 dark:bg-[#111827]/90 border border-dashed border-slate-300 dark:border-white/[0.12]">
         <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mx-auto mb-3">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -413,11 +438,11 @@
         </div>
         <h3 class="text-base font-bold text-slate-900 dark:text-white">No matching projects found</h3>
         <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
-          Try clearing your search or filter, or create a new project card to start tracking tasks and payouts.
+          Clear your active search or filter, or add a new project card to start tracking tasks and payouts.
         </p>
         <button id="emptyNewProjectBtn" type="button"
           class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer">
-          + Add Project
+          + New Project
         </button>
       </div>
 
@@ -425,24 +450,41 @@
 
   </main>
 
-  <!-- Minimalist Footer -->
-  <footer class="border-t border-slate-200/80 dark:border-white/[0.06] mt-10">
+  <!-- =====================================================================
+       FOOTER WITH GITHUB PAGES HOSTING TIP & RESET OPTION
+  ====================================================================== -->
+  <footer class="border-t border-slate-200/80 dark:border-white/[0.06] mt-10 bg-white/40 dark:bg-[#0B0F19]/60">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
-      <div class="flex items-center gap-2">
-        <span>Data stored privately in your browser's local storage.</span>
-        <span class="hidden sm:inline">•</span>
-        <span class="hidden sm:inline">Click any task count or payment amount to edit directly.</span>
+      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+        <span class="inline-flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Ready for <strong>GitHub Pages</strong>: Zero secrets stored in source code.</span>
+        </span>
+        <button id="openDeployGuideBtn" type="button"
+          class="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer">
+          How to host & sync across devices →
+        </button>
       </div>
-      <button id="resetSampleBtn" type="button"
-        class="text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 font-medium underline underline-offset-4 transition cursor-pointer">
-        Reset Sample Data
-      </button>
+      <div class="flex items-center gap-4">
+        <button id="exportJsonBtn" type="button"
+          class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 font-medium transition cursor-pointer">
+          Backup JSON
+        </button>
+        <button id="resetDefaultBtn" type="button"
+          class="text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 font-medium underline underline-offset-4 transition cursor-pointer">
+          Reset to Default Projects
+        </button>
+      </div>
     </div>
   </footer>
 
-  <!-- Add / Edit Project Modal -->
-  <div id="projectModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
-    <div class="w-full max-w-lg rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/[0.1] shadow-2xl overflow-hidden transform transition-all">
+  <!-- =====================================================================
+       MODAL 1: ADD / EDIT PROJECT MODAL
+  ====================================================================== -->
+  <div id="projectModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm">
+    <div class="w-full max-w-lg rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/[0.1] shadow-2xl overflow-hidden">
       <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/[0.08]">
         <h3 id="modalTitle" class="text-lg font-bold text-slate-900 dark:text-white">New Project</h3>
         <button id="closeModalBtn" type="button" aria-label="Close modal"
@@ -461,15 +503,15 @@
           <label for="projectNameInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
             Project Name <span class="text-rose-500">*</span>
           </label>
-          <input id="projectNameInput" type="text" required placeholder="e.g., AI Data Annotation — Batch 5"
+          <input id="projectNameInput" type="text" required placeholder="e.g., Voces Mundi"
             class="w-full h-10 px-3.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
           <p id="nameErrorMsg" class="hidden text-xs text-rose-500 mt-1">Please enter a project name.</p>
         </div>
 
-        <!-- Pricing Type Toggle -->
+        <!-- Pricing Mode Toggle -->
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
-            Payout Calculation Mode
+            Pricing Mode
           </label>
           <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-white/[0.08]">
             <button type="button" id="pricingPerTaskBtn"
@@ -478,14 +520,13 @@
             </button>
             <button type="button" id="pricingFixedBtn"
               class="py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-              Fixed Total Payout
+              Fixed Total
             </button>
           </div>
         </div>
 
-        <!-- Dynamic Rate / Fixed Amount + Tasks Row -->
+        <!-- Tasks Completed + Rate / Fixed Amount -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Tasks Completed -->
           <div>
             <label for="projectTasksInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
               Tasks Completed
@@ -498,18 +539,17 @@
             </div>
           </div>
 
-          <!-- Rate per Task OR Fixed Payout -->
           <div id="rateInputGroup">
             <label for="projectRateInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
-              Rate per Task (<span class="currency-symbol">$</span>)
+              Rate per Task (USD $)
             </label>
-            <input id="projectRateInput" type="number" min="0" step="0.01" placeholder="0.00"
+            <input id="projectRateInput" type="number" min="0" step="0.01" placeholder="5.00"
               class="w-full h-10 px-3.5 rounded-xl font-mono text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
           </div>
 
           <div id="fixedInputGroup" class="hidden">
             <label for="projectFixedInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
-              Fixed Expected Payout (<span class="currency-symbol">$</span>)
+              Expected Payout (USD $)
             </label>
             <input id="projectFixedInput" type="number" min="0" step="0.01" placeholder="0.00"
               class="w-full h-10 px-3.5 rounded-xl font-mono text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
@@ -521,7 +561,7 @@
           <div>
             <div class="flex items-center justify-between mb-1.5">
               <label for="projectReceivedInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                Payout Received (<span class="currency-symbol">$</span>)
+                Received (USD $)
               </label>
               <button type="button" id="fillFullReceivedBtn" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer">
                 Match Expected
@@ -533,7 +573,7 @@
 
           <div>
             <label for="projectStatusInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
-              Project Status
+              Status
             </label>
             <select id="projectStatusInput"
               class="w-full h-10 px-3 rounded-xl text-sm font-medium bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
@@ -545,14 +585,14 @@
           </div>
         </div>
 
-        <!-- Live Calculation Preview Box -->
+        <!-- Live Calculation Preview -->
         <div class="rounded-xl p-3.5 bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-white/[0.06] flex items-center justify-between text-xs">
           <div>
-            <span class="text-slate-500 dark:text-slate-400 block">Calculated Expected</span>
+            <span class="text-slate-500 dark:text-slate-400 block">Expected Payout</span>
             <span id="modalPreviewExpected" class="font-mono font-bold text-sm text-slate-900 dark:text-white">$0.00</span>
           </div>
           <div class="text-right">
-            <span class="text-slate-500 dark:text-slate-400 block">Pending Balance</span>
+            <span class="text-slate-500 dark:text-slate-400 block">Pending Payout</span>
             <span id="modalPreviewPending" class="font-mono font-bold text-sm text-amber-600 dark:text-amber-400">$0.00</span>
           </div>
         </div>
@@ -560,9 +600,9 @@
         <!-- Notes -->
         <div>
           <label for="projectNotesInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
-            Quick Notes (Optional)
+            Notes (Optional)
           </label>
-          <textarea id="projectNotesInput" rows="2" placeholder="Deliverables, milestone notes, client payment schedule..."
+          <textarea id="projectNotesInput" rows="2" placeholder="Deliverables, payment milestone, or batch details..."
             class="w-full p-3 rounded-xl text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"></textarea>
         </div>
 
@@ -581,11 +621,214 @@
     </div>
   </div>
 
-  <!-- Custom Confirmation Dialog (Replaces native confirm()) -->
-  <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+  <!-- =====================================================================
+       MODAL 2: CROSS-DEVICE CLOUD SYNC MODAL (GITHUB GIST & FIREBASE)
+  ====================================================================== -->
+  <div id="syncModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto">
+    <div class="w-full max-w-xl rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/[0.1] shadow-2xl overflow-hidden my-auto">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/[0.08]">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Cross-Device Cloud Sync</h3>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Zero-secret sync stored only in your browser — safe for public GitHub repos</p>
+          </div>
+        </div>
+        <button id="closeSyncModalBtn" type="button" aria-label="Close sync modal"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5 max-h-[82vh] overflow-y-auto">
+
+        <!-- Provider Selector Tabs -->
+        <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-white/[0.08]">
+          <button type="button" id="syncTabGistBtn"
+            class="py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm">
+            GitHub Gist (Recommended)
+          </button>
+          <button type="button" id="syncTabFirebaseBtn"
+            class="py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            Firebase Realtime DB
+          </button>
+        </div>
+
+        <!-- GitHub Gist Configuration Panel -->
+        <div id="gistConfigPanel" class="space-y-3.5">
+          <div class="rounded-xl p-3.5 bg-indigo-500/[0.07] border border-indigo-500/20 text-xs text-slate-700 dark:text-slate-300 space-y-1">
+            <p class="font-semibold text-indigo-700 dark:text-indigo-300">How GitHub Gist Sync works:</p>
+            <p class="leading-relaxed">Create a Personal Access Token on GitHub with only the <code class="px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-slate-800 font-mono text-[11px]">gist</code> permission. This app creates a private Gist (<code class="font-mono text-[11px]">project-payout-tracker-data.json</code>) and auto-syncs whenever you edit tasks or payouts.</p>
+          </div>
+
+          <div>
+            <label for="githubTokenInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+              GitHub Personal Access Token (<code class="font-mono lowercase">gist</code> scope)
+            </label>
+            <input id="githubTokenInput" type="password" autocomplete="off" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+              class="w-full h-10 px-3.5 rounded-xl font-mono text-xs sm:text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+          </div>
+
+          <div>
+            <label for="githubGistIdInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+              Gist ID <span class="text-slate-400 font-normal normal-case">(Optional — auto-created if empty)</span>
+            </label>
+            <input id="githubGistIdInput" type="text" placeholder="Auto-detected or created on connect"
+              class="w-full h-10 px-3.5 rounded-xl font-mono text-xs sm:text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+          </div>
+        </div>
+
+        <!-- Firebase Configuration Panel -->
+        <div id="firebaseConfigPanel" class="hidden space-y-3.5">
+          <div class="rounded-xl p-3.5 bg-amber-500/[0.07] border border-amber-500/20 text-xs text-slate-700 dark:text-slate-300 space-y-1">
+            <p class="font-semibold text-amber-700 dark:text-amber-300">Firebase Realtime Database URL:</p>
+            <p class="leading-relaxed">Paste your Realtime Database root URL (e.g., <code class="font-mono text-[11px]">https://my-app-default-rtdb.firebaseio.com</code>). Data syncs to <code class="font-mono text-[11px]">/project_payout_tracker_v2.json</code>.</p>
+          </div>
+
+          <div>
+            <label for="firebaseUrlInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+              Firebase Database URL
+            </label>
+            <input id="firebaseUrlInput" type="url" placeholder="https://your-project-default-rtdb.firebaseio.com"
+              class="w-full h-10 px-3.5 rounded-xl font-mono text-xs sm:text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+          </div>
+        </div>
+
+        <!-- Connect & Manual Sync Controls -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="saveSyncConfigBtn" type="button"
+            class="h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/25 transition cursor-pointer">
+            Connect & Sync Now
+          </button>
+          <button id="manualPullBtn" type="button"
+            class="h-10 px-3.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer">
+            Pull from Cloud
+          </button>
+          <button id="disconnectSyncBtn" type="button"
+            class="h-10 px-3.5 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer ml-auto">
+            Disconnect
+          </button>
+        </div>
+
+        <!-- 1-Click Magic Sync Link & Device Pairing Box -->
+        <div class="pt-4 border-t border-slate-200/80 dark:border-white/[0.08] space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
+              1-Click Device Pairing (Phone / Tablet / Laptop)
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Copy the <strong>Magic Sync Link</strong> and open it on your phone—it will automatically configure sync and strip the key from the URL bar for security.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="copyMagicLinkBtn" type="button"
+              class="h-9 px-3.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition cursor-pointer">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              </svg>
+              <span>Copy Magic Sync Link</span>
+            </button>
+
+            <button id="copySyncKeyBtn" type="button"
+              class="h-9 px-3.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <span>Copy Sync Key</span>
+            </button>
+          </div>
+
+          <!-- Paste Sync Key on Secondary Device -->
+          <div class="flex items-center gap-2 pt-1">
+            <input id="pasteSyncKeyInput" type="text" placeholder="Or paste a Sync Key here to pair this device..."
+              class="flex-1 h-9 px-3 rounded-xl font-mono text-xs bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+            <button id="applySyncKeyBtn" type="button"
+              class="h-9 px-3.5 rounded-xl text-xs font-semibold bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600 text-white transition cursor-pointer">
+              Pair
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 3: GITHUB PAGES DEPLOYMENT GUIDE MODAL
+  ====================================================================== -->
+  <div id="deployGuideModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm">
+    <div class="w-full max-w-lg rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/[0.1] shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/[0.08]">
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Host on GitHub Pages in 60 Seconds</h3>
+        <button id="closeDeployGuideBtn" type="button" aria-label="Close guide"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-3.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+        <ol class="list-decimal list-inside space-y-2.5">
+          <li>Create a new GitHub repository (e.g., <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono text-xs">payout-tracker</code>).</li>
+          <li>Click <strong>Add file → Create new file</strong>, name it <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono text-xs">index.html</code>, paste this entire code, and click <strong>Commit changes</strong>.</li>
+          <li>Open your repo's <strong>Settings → Pages</strong>, set Source to <strong>Deploy from a branch</strong>, select <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono text-xs">main</code> / <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono text-xs">/ (root)</code>, and click <strong>Save</strong>.</li>
+          <li>Open your live <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 font-mono text-xs">username.github.io/payout-tracker</code> link, click <strong>Cloud Sync</strong>, and connect a GitHub <code class="font-mono text-xs">gist</code> token to sync between PC and phone!</li>
+        </ol>
+        <div class="pt-3 flex justify-end">
+          <button id="doneDeployGuideBtn" type="button"
+            class="h-9 px-4 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer">
+            Got It
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 4: CURRENCY EXCHANGE RATE MODAL
+  ====================================================================== -->
+  <div id="rateModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm">
+    <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/[0.1] shadow-2xl p-6 space-y-4">
+      <div>
+        <h4 class="text-base font-bold text-slate-900 dark:text-white">Exchange Rate (<span id="rateModalCurrencyLabel">BDT</span>)</h4>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">All project amounts are stored in USD. Set the display multiplier below:</p>
+      </div>
+      <div>
+        <label for="rateMultiplierInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+          1 USD equals (<span id="rateModalCodeLabel">BDT</span>)
+        </label>
+        <input id="rateMultiplierInput" type="number" min="0.0001" step="0.01"
+          class="w-full h-10 px-3.5 rounded-xl font-mono text-sm bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-1">
+        <button id="cancelRateModalBtn" type="button"
+          class="h-9 px-4 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
+          Cancel
+        </button>
+        <button id="saveRateModalBtn" type="button"
+          class="h-9 px-4 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer">
+          Update Rate
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 5: CUSTOM CONFIRMATION DIALOG (REPLACES NATIVE CONFIRM)
+  ====================================================================== -->
+  <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm">
     <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/[0.1] shadow-2xl p-6 space-y-4">
       <div class="flex items-start gap-3.5">
-        <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
@@ -601,7 +844,7 @@
           Cancel
         </button>
         <button id="confirmProceedBtn" type="button"
-          class="h-9 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white shadow-sm transition cursor-pointer">
+          class="h-9 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer">
           Confirm
         </button>
       </div>
@@ -613,21 +856,111 @@
 
   <script>
     // =========================================================================
-    // 1. STATE & CONSTANTS
+    // 1. CONSTANTS & PRELOADED DATASET (project_payout_tracker_v2)
     // =========================================================================
-    const STORAGE_KEY = 'taskpulse_tracker_v1';
+    const DATA_STORAGE_KEY = 'project_payout_tracker_v2';
+    const SYNC_CONFIG_KEY = 'project_payout_tracker_sync_cfg_v2';
+    const GIST_FILENAME = 'project-payout-tracker-data.json';
 
     const CURRENCIES = {
-      USD: { symbol: '$', code: 'USD', locale: 'en-US' },
-      BDT: { symbol: '৳', code: 'BDT', locale: 'en-BD' },
-      EUR: { symbol: '€', code: 'EUR', locale: 'de-DE' },
-      GBP: { symbol: '£', code: 'GBP', locale: 'en-GB' }
+      USD: { symbol: '$', code: 'USD' },
+      BDT: { symbol: '৳', code: 'BDT' },
+      EUR: { symbol: '€', code: 'EUR' },
+      GBP: { symbol: '£', code: 'GBP' }
     };
+
+    const DEFAULT_RATES = {
+      USD: 1,
+      BDT: 120,
+      EUR: 0.92,
+      GBP: 0.79
+    };
+
+    // Exact 7 projects from the user's CSV file
+    const DEFAULT_PROJECTS = [
+      {
+        id: 'proj-voces-mundi',
+        name: 'Voces Mundi',
+        status: 'Active',
+        pricingType: 'per_task',
+        tasks: 16,
+        ratePerTask: 5.00,
+        fixedPayout: 0,
+        received: 0.00,
+        notes: ''
+      },
+      {
+        id: 'proj-cueball',
+        name: 'Cueball',
+        status: 'Paid',
+        pricingType: 'per_task',
+        tasks: 20,
+        ratePerTask: 10.00,
+        fixedPayout: 0,
+        received: 200.00,
+        notes: ''
+      },
+      {
+        id: 'proj-starfruit',
+        name: 'Starfruit',
+        status: 'Paid',
+        pricingType: 'per_task',
+        tasks: 12,
+        ratePerTask: 4.00,
+        fixedPayout: 0,
+        received: 48.00,
+        notes: ''
+      },
+      {
+        id: 'proj-trident',
+        name: 'Trident',
+        status: 'Paid',
+        pricingType: 'per_task',
+        tasks: 18,
+        ratePerTask: 5.00,
+        fixedPayout: 0,
+        received: 90.00,
+        notes: ''
+      },
+      {
+        id: 'proj-rudder',
+        name: 'Rudder',
+        status: 'Paid',
+        pricingType: 'per_task',
+        tasks: 30,
+        ratePerTask: 5.00,
+        fixedPayout: 0,
+        received: 150.00,
+        notes: ''
+      },
+      {
+        id: 'proj-chameleon',
+        name: 'Chameleon',
+        status: 'Paid',
+        pricingType: 'per_task',
+        tasks: 25,
+        ratePerTask: 5.00,
+        fixedPayout: 0,
+        received: 125.00,
+        notes: ''
+      },
+      {
+        id: 'proj-espresso',
+        name: 'Espresso',
+        status: 'Paid',
+        pricingType: 'per_task',
+        tasks: 7,
+        ratePerTask: 10.00,
+        fixedPayout: 0,
+        received: 70.00,
+        notes: ''
+      }
+    ];
 
     const STATUS_STYLES = {
       'Active': {
-        badge: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/25',
-        dot: 'bg-indigo-500'
+        badge: 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border-cyan-500/25',
+        dot: 'bg-cyan-500'
       },
       'Pending Payout': {
         badge: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/25',
@@ -643,103 +976,70 @@
       }
     };
 
-    const SAMPLE_PROJECTS = [
-      {
-        id: 'proj-1',
-        name: 'AI Model RLHF Evaluation — Batch 4',
-        pricingType: 'per_task', // 'per_task' | 'fixed'
-        ratePerTask: 18.50,
-        fixedPayout: 0,
-        tasks: 16,
-        received: 148.00,
-        status: 'Active',
-        notes: 'Currently at 16 tasks — aiming for 25 before Friday cutoff.',
-        updatedAt: Date.now() - 1000 * 60 * 15
-      },
-      {
-        id: 'proj-2',
-        name: 'Fintech Dashboard UI Redesign',
-        pricingType: 'fixed',
-        ratePerTask: 0,
-        fixedPayout: 1250.00,
-        tasks: 12,
-        received: 625.00,
-        status: 'Pending Payout',
-        notes: 'Final Figma prototype delivered; awaiting 50% milestone release.',
-        updatedAt: Date.now() - 1000 * 60 * 60 * 4
-      },
-      {
-        id: 'proj-3',
-        name: 'E-Commerce SEO Content Sprint',
-        pricingType: 'per_task',
-        ratePerTask: 25.00,
-        fixedPayout: 0,
-        tasks: 9,
-        received: 0,
-        status: 'Active',
-        notes: '9 of 15 product guides completed. Invoice triggers at 15 tasks.',
-        updatedAt: Date.now() - 1000 * 60 * 60 * 20
-      },
-      {
-        id: 'proj-4',
-        name: 'Mobile App Localization QA',
-        pricingType: 'per_task',
-        ratePerTask: 12.00,
-        fixedPayout: 0,
-        tasks: 20,
-        received: 240.00,
-        status: 'Paid',
-        notes: 'All 20 localization test suites verified & invoice settled.',
-        updatedAt: Date.now() - 1000 * 60 * 60 * 48
-      }
-    ];
-
+    // Application State
     let state = {
       projects: [],
       currency: 'USD',
+      exchangeRates: { ...DEFAULT_RATES },
       theme: 'dark',
       filter: 'ALL',
       search: '',
-      sort: 'recent',
-      chartMode: 'tasks' // 'tasks' | 'earnings'
+      sort: 'pending',
+      chartMode: 'earnings', // 'earnings' | 'tasks'
+      lastModified: Date.now()
+    };
+
+    // Cloud Sync Credentials (stored strictly in localStorage, never hardcoded)
+    let syncConfig = {
+      provider: 'none', // 'none' | 'gist' | 'firebase'
+      githubToken: '',
+      gistId: '',
+      firebaseUrl: ''
     };
 
     let barChartInstance = null;
     let doughnutChartInstance = null;
     let confirmCallback = null;
     let modalPricingMode = 'per_task';
+    let pushDebounceTimer = null;
+    let isSyncingNow = false;
 
     // =========================================================================
-    // 2. CALCULATION & FORMATTING HELPERS
+    // 2. FINANCIAL CALCULATIONS & CURRENCY FORMATTING
     // =========================================================================
-    function getExpectedPayout(project) {
+    function getExpectedPayoutUSD(project) {
       if (project.pricingType === 'fixed') {
         return Math.max(0, Number(project.fixedPayout) || 0);
       }
       return Math.max(0, (Number(project.tasks) || 0) * (Number(project.ratePerTask) || 0));
     }
 
-    function getPendingPayout(project) {
-      const expected = getExpectedPayout(project);
+    function getPendingPayoutUSD(project) {
+      const expected = getExpectedPayoutUSD(project);
       const received = Math.max(0, Number(project.received) || 0);
       return Math.max(0, expected - received);
     }
 
-    function getEffectiveRate(project) {
+    function getEffectiveRateUSD(project) {
       const tasks = Number(project.tasks) || 0;
-      const expected = getExpectedPayout(project);
-      return tasks > 0 ? expected / tasks : (project.pricingType === 'per_task' ? Number(project.ratePerTask) || 0 : 0);
+      const expected = getExpectedPayoutUSD(project);
+      if (tasks > 0) return expected / tasks;
+      return project.pricingType === 'per_task' ? (Number(project.ratePerTask) || 0) : 0;
     }
 
-    function formatMoney(amount, compact = false) {
+    function convertFromUSD(usdAmount) {
+      const rate = Number(state.exchangeRates[state.currency]) || 1;
+      return (Number(usdAmount) || 0) * rate;
+    }
+
+    function formatMoney(usdAmount, compact = false) {
       const curr = CURRENCIES[state.currency] || CURRENCIES.USD;
-      const num = Number(amount) || 0;
-      if (compact && Math.abs(num) >= 10000) {
-        return curr.symbol + (num / 1000).toFixed(1) + 'k';
+      const val = convertFromUSD(usdAmount);
+      if (compact && Math.abs(val) >= 10000) {
+        return `${curr.symbol}${(val / 1000).toFixed(1)}k`;
       }
-      const hasDecimals = Math.abs(num % 1) > 0.001;
-      const formatted = num.toLocaleString('en-US', {
-        minimumFractionDigits: hasDecimals ? 2 : (state.currency === 'BDT' ? 0 : 2),
+      const formatted = val.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
       return `${curr.symbol}${formatted}`;
@@ -752,65 +1052,389 @@
     }
 
     // =========================================================================
-    // 3. PERSISTENCE & FEEDBACK
+    // 3. LOCAL STORAGE & CLOUD SYNC ENGINE (GITHUB GIST & FIREBASE)
     // =========================================================================
-    function loadState() {
+    function loadLocalState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          state.projects = Array.isArray(parsed.projects) ? parsed.projects : JSON.parse(JSON.stringify(SAMPLE_PROJECTS));
+        const rawData = localStorage.getItem(DATA_STORAGE_KEY);
+        if (rawData) {
+          const parsed = JSON.parse(rawData);
+          state.projects = Array.isArray(parsed.projects)
+            ? parsed.projects
+            : JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
           state.currency = CURRENCIES[parsed.currency] ? parsed.currency : 'USD';
+          state.exchangeRates = { ...DEFAULT_RATES, ...(parsed.exchangeRates || {}) };
           state.theme = parsed.theme === 'light' ? 'light' : 'dark';
-          state.chartMode = parsed.chartMode === 'earnings' ? 'earnings' : 'tasks';
+          state.chartMode = parsed.chartMode === 'tasks' ? 'tasks' : 'earnings';
+          state.lastModified = Number(parsed.lastModified) || Date.now();
         } else {
-          state.projects = JSON.parse(JSON.stringify(SAMPLE_PROJECTS));
+          state.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+          state.lastModified = Date.now();
         }
       } catch (err) {
-        console.error('Failed to load state:', err);
-        state.projects = JSON.parse(JSON.stringify(SAMPLE_PROJECTS));
+        console.error('Error loading local state:', err);
+        state.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+      }
+
+      try {
+        const rawSync = localStorage.getItem(SYNC_CONFIG_KEY);
+        if (rawSync) {
+          const parsedSync = JSON.parse(rawSync);
+          syncConfig = { ...syncConfig, ...parsedSync };
+        }
+      } catch (err) {
+        console.error('Error loading sync config:', err);
       }
     }
 
-    function saveState() {
+    function saveSyncConfig() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(syncConfig));
+      } catch (err) {
+        console.error('Failed to save sync config:', err);
+      }
+    }
+
+    function saveState(triggerCloudPush = true) {
+      state.lastModified = Date.now();
+      try {
+        localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify({
           projects: state.projects,
           currency: state.currency,
+          exchangeRates: state.exchangeRates,
           theme: state.theme,
-          chartMode: state.chartMode
+          chartMode: state.chartMode,
+          lastModified: state.lastModified
         }));
-        pulseSaveStatus();
       } catch (err) {
-        console.error('Failed to save state:', err);
+        console.error('Failed to save data locally:', err);
+      }
+
+      if (triggerCloudPush && isCloudConfigured()) {
+        scheduleCloudPush();
+      } else if (!isCloudConfigured()) {
+        updateSyncStatusUI('local');
       }
     }
 
-    let saveTimeout = null;
-    function pulseSaveStatus() {
-      const dot = document.getElementById('saveStatusDot');
-      const text = document.getElementById('saveStatusText');
-      if (!dot || !text) return;
-      dot.classList.remove('bg-emerald-500');
-      dot.classList.add('bg-indigo-400', 'animate-ping');
-      text.textContent = 'Saving changes...';
-      clearTimeout(saveTimeout);
-      saveTimeout = setTimeout(() => {
-        dot.classList.remove('bg-indigo-400', 'animate-ping');
-        dot.classList.add('bg-emerald-500');
-        text.textContent = 'All changes saved locally';
-      }, 450);
+    function isCloudConfigured() {
+      if (syncConfig.provider === 'gist' && syncConfig.githubToken.trim()) return true;
+      if (syncConfig.provider === 'firebase' && syncConfig.firebaseUrl.trim()) return true;
+      return false;
     }
 
+    function updateSyncStatusUI(status, detail = '') {
+      const dot = document.getElementById('syncStatusDot');
+      const label = document.getElementById('syncStatusLabel');
+      const pill = document.getElementById('syncStatusPill');
+      if (!dot || !label || !pill) return;
+
+      dot.className = 'w-2 h-2 rounded-full';
+      if (status === 'syncing') {
+        dot.classList.add('bg-cyan-400', 'animate-ping');
+        label.textContent = 'Syncing...';
+        pill.title = 'Syncing data across devices...';
+      } else if (status === 'synced') {
+        dot.classList.add('bg-emerald-500');
+        label.textContent = 'Synced';
+        pill.title = detail || 'Cloud sync active and up to date';
+      } else if (status === 'error') {
+        dot.classList.add('bg-rose-500');
+        label.textContent = 'Sync Error';
+        pill.title = detail || 'Click to check Cloud Sync settings';
+      } else {
+        dot.classList.add('bg-slate-400');
+        label.textContent = 'Local Only';
+        pill.title = 'Click to connect GitHub Gist or Firebase sync';
+      }
+    }
+
+    function scheduleCloudPush() {
+      updateSyncStatusUI('syncing');
+      clearTimeout(pushDebounceTimer);
+      pushDebounceTimer = setTimeout(() => {
+        pushToCloud();
+      }, 1200);
+    }
+
+    function buildSyncPayload() {
+      return {
+        version: 2,
+        lastModified: state.lastModified,
+        currency: state.currency,
+        exchangeRates: state.exchangeRates,
+        projects: state.projects
+      };
+    }
+
+    async function pushToCloud() {
+      if (!isCloudConfigured() || isSyncingNow) return;
+      isSyncingNow = true;
+      updateSyncStatusUI('syncing');
+
+      try {
+        const payload = buildSyncPayload();
+
+        if (syncConfig.provider === 'gist') {
+          const token = syncConfig.githubToken.trim();
+          let gistId = syncConfig.gistId.trim();
+
+          if (!gistId) {
+            gistId = await findOrCreateGist(token, payload);
+            syncConfig.gistId = gistId;
+            saveSyncConfig();
+            const gistInput = document.getElementById('githubGistIdInput');
+            if (gistInput) gistInput.value = gistId;
+          } else {
+            const res = await fetch(`https://api.github.com/gists/${encodeURIComponent(gistId)}`, {
+              method: 'PATCH',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/vnd.github+json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                files: {
+                  [GIST_FILENAME]: {
+                    content: JSON.stringify(payload, null, 2)
+                  }
+                }
+              })
+            });
+            if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+          }
+        } else if (syncConfig.provider === 'firebase') {
+          const baseUrl = syncConfig.firebaseUrl.trim().replace(/\/+$/, '');
+          const res = await fetch(`${baseUrl}/${DATA_STORAGE_KEY}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error(`Firebase API ${res.status}`);
+        }
+
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        updateSyncStatusUI('synced', `Last synced at ${timeStr}`);
+      } catch (err) {
+        console.error('Cloud push failed:', err);
+        updateSyncStatusUI('error', err.message);
+      } finally {
+        isSyncingNow = false;
+      }
+    }
+
+    async function findOrCreateGist(token, initialPayload) {
+      // 1. Search existing user gists for GIST_FILENAME
+      const listRes = await fetch('https://api.github.com/gists?per_page=50', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json'
+        }
+      });
+      if (!listRes.ok) throw new Error(`GitHub Auth Failed (${listRes.status})`);
+      const gists = await listRes.json();
+      const existing = gists.find(g => g.files && g.files[GIST_FILENAME]);
+      if (existing) {
+        return existing.id;
+      }
+
+      // 2. Create a new secret Gist if none exists
+      const createRes = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          description: 'Project Task & Payout Tracker Cloud Sync Data',
+          public: false,
+          files: {
+            [GIST_FILENAME]: {
+              content: JSON.stringify(initialPayload, null, 2)
+            }
+          }
+        })
+      });
+      if (!createRes.ok) throw new Error(`Failed to create Gist (${createRes.status})`);
+      const created = await createRes.json();
+      return created.id;
+    }
+
+    async function pullFromCloud(forceOverwrite = false) {
+      if (!isCloudConfigured() || isSyncingNow) return;
+      isSyncingNow = true;
+      updateSyncStatusUI('syncing');
+
+      try {
+        let remoteData = null;
+
+        if (syncConfig.provider === 'gist') {
+          const token = syncConfig.githubToken.trim();
+          let gistId = syncConfig.gistId.trim();
+
+          if (!gistId) {
+            gistId = await findOrCreateGist(token, buildSyncPayload());
+            syncConfig.gistId = gistId;
+            saveSyncConfig();
+            const gistInput = document.getElementById('githubGistIdInput');
+            if (gistInput) gistInput.value = gistId;
+          }
+
+          const res = await fetch(`https://api.github.com/gists/${encodeURIComponent(gistId)}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github+json'
+            },
+            cache: 'no-store'
+          });
+          if (!res.ok) throw new Error(`GitHub Pull Failed (${res.status})`);
+          const gist = await res.json();
+          const fileObj = gist.files && gist.files[GIST_FILENAME];
+          if (fileObj && fileObj.content) {
+            remoteData = JSON.parse(fileObj.content);
+          }
+        } else if (syncConfig.provider === 'firebase') {
+          const baseUrl = syncConfig.firebaseUrl.trim().replace(/\/+$/, '');
+          const res = await fetch(`${baseUrl}/${DATA_STORAGE_KEY}.json`, { cache: 'no-store' });
+          if (!res.ok) throw new Error(`Firebase Pull Failed (${res.status})`);
+          remoteData = await res.json();
+        }
+
+        if (remoteData && Array.isArray(remoteData.projects)) {
+          const remoteTs = Number(remoteData.lastModified) || 0;
+          if (forceOverwrite || remoteTs > state.lastModified) {
+            state.projects = remoteData.projects;
+            if (remoteData.currency && CURRENCIES[remoteData.currency]) {
+              state.currency = remoteData.currency;
+              document.getElementById('currencySelect').value = state.currency;
+            }
+            if (remoteData.exchangeRates) {
+              state.exchangeRates = { ...DEFAULT_RATES, ...remoteData.exchangeRates };
+            }
+            state.lastModified = remoteTs || Date.now();
+            localStorage.setItem(DATA_STORAGE_KEY, JSON.stringify({
+              projects: state.projects,
+              currency: state.currency,
+              exchangeRates: state.exchangeRates,
+              theme: state.theme,
+              chartMode: state.chartMode,
+              lastModified: state.lastModified
+            }));
+            updateRateBadgeUI();
+            renderAll();
+            showToast('Synced latest updates from cloud', 'success');
+          } else if (state.lastModified > remoteTs) {
+            // Local is newer; push local state up
+            isSyncingNow = false;
+            await pushToCloud();
+            return;
+          }
+        } else {
+          // Remote is empty; seed remote with current local data
+          isSyncingNow = false;
+          await pushToCloud();
+          return;
+        }
+
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        updateSyncStatusUI('synced', `Last synced at ${timeStr}`);
+      } catch (err) {
+        console.error('Cloud pull failed:', err);
+        updateSyncStatusUI('error', err.message);
+      } finally {
+        isSyncingNow = false;
+      }
+    }
+
+    // Encode / Decode Magic Sync Key & #sync=... URL hash
+    function encodeSyncKey() {
+      const compact = {
+        p: syncConfig.provider,
+        t: syncConfig.githubToken,
+        g: syncConfig.gistId,
+        f: syncConfig.firebaseUrl
+      };
+      const jsonStr = JSON.stringify(compact);
+      return btoa(unescape(encodeURIComponent(jsonStr)))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+    }
+
+    function decodeAndApplySyncKey(rawKey) {
+      try {
+        let base64 = rawKey.trim().replace(/-/g, '+').replace(/_/g, '/');
+        while (base64.length % 4) base64 += '=';
+        const jsonStr = decodeURIComponent(escape(atob(base64)));
+        const parsed = JSON.parse(jsonStr);
+        if (!parsed || !parsed.p || parsed.p === 'none') return false;
+
+        syncConfig.provider = parsed.p;
+        syncConfig.githubToken = parsed.t || '';
+        syncConfig.gistId = parsed.g || '';
+        syncConfig.firebaseUrl = parsed.f || '';
+        saveSyncConfig();
+        populateSyncModalInputs();
+        return true;
+      } catch (err) {
+        console.error('Invalid sync key:', err);
+        return false;
+      }
+    }
+
+    function checkMagicSyncUrlHash() {
+      const hash = window.location.hash || '';
+      if (hash.startsWith('#sync=')) {
+        const key = hash.slice(6);
+        // Immediately strip #sync=... from the URL bar for security
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        } else {
+          window.location.hash = '';
+        }
+
+        if (decodeAndApplySyncKey(key)) {
+          showToast('Device paired via Magic Sync Link!', 'success');
+          pullFromCloud(true);
+        } else {
+          showToast('Invalid Magic Sync Link', 'error');
+        }
+      }
+    }
+
+    // Reliable Clipboard Copy using document.execCommand('copy')
+    function copyTextToClipboard(text, successMsg) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg, 'success');
+      } catch (err) {
+        console.error('Copy failed:', err);
+        showToast('Could not copy automatically', 'error');
+      }
+      document.body.removeChild(textarea);
+    }
+
+    // =========================================================================
+    // 4. UI FEEDBACK & MODALS
+    // =========================================================================
     function showToast(message, type = 'success') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      const accent = type === 'success'
-        ? 'border-emerald-500/30 bg-slate-900/95 text-white'
-        : 'border-indigo-500/30 bg-slate-900/95 text-white';
-      const dotColor = type === 'success' ? 'bg-emerald-400' : 'bg-indigo-400';
+      const dotColor = type === 'success'
+        ? 'bg-emerald-400'
+        : type === 'error'
+          ? 'bg-rose-400'
+          : 'bg-cyan-400';
 
-      toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-2.5 rounded-xl border ${accent} shadow-xl backdrop-blur-md text-xs font-medium transform translate-y-2 opacity-0 transition-all duration-200`;
+      toast.className = 'pointer-events-auto flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-white/10 bg-slate-900/95 text-white shadow-xl backdrop-blur-md text-xs font-medium transform translate-y-2 opacity-0 transition-all duration-200';
       toast.innerHTML = `<span class="w-2 h-2 rounded-full ${dotColor} shrink-0"></span><span>${escapeHtml(message)}</span>`;
       container.appendChild(toast);
 
@@ -821,7 +1445,7 @@
       setTimeout(() => {
         toast.classList.add('translate-y-2', 'opacity-0');
         setTimeout(() => toast.remove(), 220);
-      }, 2600);
+      }, 2800);
     }
 
     function openConfirm(title, message, onProceed) {
@@ -840,9 +1464,6 @@
       confirmCallback = null;
     }
 
-    // =========================================================================
-    // 4. THEME & CURRENCY APPLICATION
-    // =========================================================================
     function applyTheme() {
       const html = document.documentElement;
       if (state.theme === 'dark') {
@@ -853,43 +1474,54 @@
       updateCharts();
     }
 
-    function updateCurrencySymbols() {
-      const curr = CURRENCIES[state.currency] || CURRENCIES.USD;
-      document.querySelectorAll('.currency-symbol').forEach(el => {
-        el.textContent = curr.symbol;
-      });
+    function updateRateBadgeUI() {
+      const rateBtn = document.getElementById('editRateBtn');
+      const subMeta = document.getElementById('subHeaderMeta');
+      if (state.currency === 'USD') {
+        rateBtn.classList.add('hidden');
+        subMeta.textContent = 'All amounts in USD • Instant auto-save enabled';
+      } else {
+        const rate = state.exchangeRates[state.currency] || 1;
+        document.getElementById('activeRateDisplay').textContent = rate;
+        document.getElementById('activeRateCode').textContent = state.currency;
+        rateBtn.classList.remove('hidden');
+        subMeta.textContent = `Base USD converted at 1 USD = ${rate} ${state.currency}`;
+      }
     }
 
     // =========================================================================
-    // 5. RENDER KPIs & INSIGHTS
+    // 5. RENDER KPIs, INSIGHTS & FILTER COUNTS
     // =========================================================================
     function renderKPIsAndInsights() {
       const projects = state.projects;
       const totalTasks = projects.reduce((sum, p) => sum + (Number(p.tasks) || 0), 0);
-      const totalExpected = projects.reduce((sum, p) => sum + getExpectedPayout(p), 0);
-      const totalReceived = projects.reduce((sum, p) => sum + (Number(p.received) || 0), 0);
-      const totalPending = projects.reduce((sum, p) => sum + getPendingPayout(p), 0);
+      const totalExpectedUSD = projects.reduce((sum, p) => sum + getExpectedPayoutUSD(p), 0);
+      const totalReceivedUSD = projects.reduce((sum, p) => sum + (Number(p.received) || 0), 0);
+      const totalPendingUSD = projects.reduce((sum, p) => sum + getPendingPayoutUSD(p), 0);
 
       const activeCount = projects.filter(p => p.status === 'Active').length;
-      const pendingProjectsCount = projects.filter(p => getPendingPayout(p) > 0.009).length;
-      const collectionPct = totalExpected > 0 ? Math.min(100, Math.round((totalReceived / totalExpected) * 100)) : 0;
-      const avgPerTask = totalTasks > 0 ? totalExpected / totalTasks : 0;
+      const paidCount = projects.filter(p => p.status === 'Paid').length;
+      const unpaidProjectsCount = projects.filter(p => getPendingPayoutUSD(p) > 0.009).length;
+
+      const rawPct = totalExpectedUSD > 0 ? Math.min(100, (totalReceivedUSD / totalExpectedUSD) * 100) : 0;
+      const collectionPctStr = `${rawPct.toFixed(1)}%`;
+      const avgPerTaskUSD = totalTasks > 0 ? totalExpectedUSD / totalTasks : 0;
 
       // Update KPI Cards
       document.getElementById('kpiTotalTasks').textContent = totalTasks.toLocaleString();
-      document.getElementById('kpiTasksSub').textContent = `${activeCount} active • ${projects.length} total project${projects.length === 1 ? '' : 's'}`;
+      document.getElementById('kpiTasksSub').textContent = `${activeCount} active • ${paidCount} paid • ${projects.length} total`;
 
-      document.getElementById('kpiExpectedPayout').textContent = formatMoney(totalExpected);
-      document.getElementById('kpiExpectedSub').textContent = `Avg ${formatMoney(avgPerTask)} per task`;
+      document.getElementById('kpiExpectedPayout').textContent = formatMoney(totalExpectedUSD);
+      document.getElementById('kpiExpectedSub').textContent = `Avg ${formatMoney(avgPerTaskUSD)} per task`;
 
-      document.getElementById('kpiReceivedPayout').textContent = formatMoney(totalReceived);
-      document.getElementById('kpiCollectionPct').textContent = `${collectionPct}%`;
-      document.getElementById('kpiCollectionBar').style.width = `${collectionPct}%`;
+      document.getElementById('kpiReceivedPayout').textContent = formatMoney(totalReceivedUSD);
+      document.getElementById('kpiCollectionPct').textContent = collectionPctStr;
+      document.getElementById('kpiCollectionBar').style.width = `${rawPct}%`;
 
-      document.getElementById('kpiPendingPayout').textContent = formatMoney(totalPending);
-      document.getElementById('kpiPendingSub').textContent = `${pendingProjectsCount} project${pendingProjectsCount === 1 ? '' : 's'} with balance due`;
+      document.getElementById('kpiPendingPayout').textContent = formatMoney(totalPendingUSD);
+      document.getElementById('kpiPendingSub').textContent = `${unpaidProjectsCount} project${unpaidProjectsCount === 1 ? '' : 's'} with unpaid balance`;
 
-      // Update Insight Badges
+      // Update Insight Chips
       if (projects.length === 0) {
         document.getElementById('insightTopEarner').textContent = '—';
         document.getElementById('insightTopEarnerVal').textContent = formatMoney(0);
@@ -900,24 +1532,25 @@
         let topEarner = projects[0];
         let bestRateProj = projects[0];
         projects.forEach(p => {
-          if (getExpectedPayout(p) > getExpectedPayout(topEarner)) topEarner = p;
-          if (getEffectiveRate(p) > getEffectiveRate(bestRateProj)) bestRateProj = p;
+          if (getExpectedPayoutUSD(p) > getExpectedPayoutUSD(topEarner)) topEarner = p;
+          if (getEffectiveRateUSD(p) > getEffectiveRateUSD(bestRateProj)) bestRateProj = p;
         });
 
         document.getElementById('insightTopEarner').textContent = topEarner.name;
-        document.getElementById('insightTopEarnerVal').textContent = formatMoney(getExpectedPayout(topEarner));
+        document.getElementById('insightTopEarnerVal').textContent = formatMoney(getExpectedPayoutUSD(topEarner));
 
         document.getElementById('insightBestRateProject').textContent = bestRateProj.name;
-        document.getElementById('insightBestRateVal').textContent = `${formatMoney(getEffectiveRate(bestRateProj))}/task`;
+        document.getElementById('insightBestRateVal').textContent = `${formatMoney(getEffectiveRateUSD(bestRateProj))}/task`;
 
-        document.getElementById('insightCollectionRate').textContent = `${collectionPct}%`;
+        document.getElementById('insightCollectionRate').textContent = collectionPctStr;
       }
 
-      // Update Filter Counts
+      // Filter Counts
       document.getElementById('count-ALL').textContent = projects.length;
       document.getElementById('count-Active').textContent = projects.filter(p => p.status === 'Active').length;
       document.getElementById('count-Pending Payout').textContent = projects.filter(p => p.status === 'Pending Payout').length;
       document.getElementById('count-Paid').textContent = projects.filter(p => p.status === 'Paid').length;
+      document.getElementById('count-On Hold').textContent = projects.filter(p => p.status === 'On Hold').length;
     }
 
     // =========================================================================
@@ -929,12 +1562,12 @@
       const tickColor = isDark ? '#94A3B8' : '#64748B';
       const tooltipBg = isDark ? '#0F172A' : '#1E293B';
 
-      const labels = state.projects.map(p => p.name.length > 20 ? p.name.slice(0, 19) + '…' : p.name);
+      const labels = state.projects.map(p => p.name.length > 16 ? p.name.slice(0, 15) + '…' : p.name);
       const fullNames = state.projects.map(p => p.name);
-      const receivedData = state.projects.map(p => Number(p.received) || 0);
-      const pendingData = state.projects.map(p => getPendingPayout(p));
+      const receivedData = state.projects.map(p => convertFromUSD(Number(p.received) || 0));
+      const pendingData = state.projects.map(p => convertFromUSD(getPendingPayoutUSD(p)));
 
-      // 1. Stacked Bar Chart: Received vs Pending Payout
+      // Chart 1: Stacked Bar Chart
       const barCtx = document.getElementById('payoutBarChart').getContext('2d');
       if (barChartInstance) {
         barChartInstance.data.labels = labels;
@@ -952,48 +1585,48 @@
             labels,
             datasets: [
               {
-                label: 'Received',
+                label: 'Payout Received',
                 data: receivedData,
                 backgroundColor: '#10B981',
                 hoverBackgroundColor: '#059669',
                 borderRadius: 6,
                 borderSkipped: false,
-                barPercentage: 0.58,
-                categoryPercentage: 0.75
+                barPercentage: 0.6,
+                categoryPercentage: 0.78
               },
               {
-                label: 'Pending',
+                label: 'Pending Payout',
                 data: pendingData,
                 backgroundColor: '#F59E0B',
                 hoverBackgroundColor: '#D97706',
                 borderRadius: 6,
                 borderSkipped: false,
-                barPercentage: 0.58,
-                categoryPercentage: 0.75
+                barPercentage: 0.6,
+                categoryPercentage: 0.78
               }
             ]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: {
-              mode: 'index',
-              intersect: false
-            },
+            interaction: { mode: 'index', intersect: false },
             plugins: {
               legend: { display: false },
               tooltip: {
                 backgroundColor: tooltipBg,
                 padding: 11,
                 cornerRadius: 10,
-                titleFont: { family: '"Plus Jakarta Sans", sans-serif', size: 12, weight: '700' },
+                titleFont: { family: '"Inter", sans-serif', size: 12, weight: '700' },
                 bodyFont: { family: '"JetBrains Mono", monospace', size: 12 },
                 callbacks: {
                   title: (items) => {
                     const idx = items[0]?.dataIndex ?? 0;
                     return state.projects[idx]?.name || '';
                   },
-                  label: (ctx) => ` ${ctx.dataset.label}: ${formatMoney(ctx.parsed.y)}`
+                  label: (ctx) => {
+                    const curr = CURRENCIES[state.currency] || CURRENCIES.USD;
+                    return ` ${ctx.dataset.label}: ${curr.symbol}${ctx.parsed.y.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                  }
                 }
               }
             },
@@ -1003,7 +1636,7 @@
                 grid: { display: false },
                 ticks: {
                   color: tickColor,
-                  font: { family: '"Plus Jakarta Sans", sans-serif', size: 11, weight: '600' }
+                  font: { family: '"Inter", sans-serif', size: 11, weight: '600' }
                 }
               },
               y: {
@@ -1014,7 +1647,10 @@
                 ticks: {
                   color: tickColor,
                   font: { family: '"JetBrains Mono", monospace', size: 11 },
-                  callback: (val) => formatMoney(val, true)
+                  callback: (val) => {
+                    const curr = CURRENCIES[state.currency] || CURRENCIES.USD;
+                    return `${curr.symbol}${val}`;
+                  }
                 }
               }
             }
@@ -1022,12 +1658,12 @@
         });
       }
 
-      // 2. Doughnut Chart: Tasks vs Earnings Share
+      // Chart 2: Doughnut Chart (By Earnings vs By Tasks)
       const doughnutCtx = document.getElementById('distributionDoughnutChart').getContext('2d');
-      const palette = ['#6366F1', '#10B981', '#F59E0B', '#EC4899', '#06B6D4', '#8B5CF6', '#F97316'];
+      const palette = ['#6366F1', '#06B6D4', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6', '#F97316', '#14B8A6'];
       const doughnutValues = state.chartMode === 'tasks'
         ? state.projects.map(p => Number(p.tasks) || 0)
-        : state.projects.map(p => getExpectedPayout(p));
+        : state.projects.map(p => convertFromUSD(getExpectedPayoutUSD(p)));
 
       if (doughnutChartInstance) {
         doughnutChartInstance.data.labels = fullNames;
@@ -1057,18 +1693,18 @@
               legend: {
                 position: 'right',
                 labels: {
-                  boxWidth: 10,
-                  boxHeight: 10,
+                  boxWidth: 9,
+                  boxHeight: 9,
                   usePointStyle: true,
                   pointStyle: 'circle',
-                  padding: 12,
+                  padding: 10,
                   color: tickColor,
-                  font: { family: '"Plus Jakarta Sans", sans-serif', size: 11, weight: '600' },
+                  font: { family: '"Inter", sans-serif', size: 11, weight: '600' },
                   generateLabels: (chart) => {
                     const data = chart.data;
                     if (!data.labels.length) return [];
                     return data.labels.map((label, i) => ({
-                      text: label.length > 16 ? label.slice(0, 15) + '…' : label,
+                      text: label.length > 15 ? label.slice(0, 14) + '…' : label,
                       fillStyle: data.datasets[0].backgroundColor[i % palette.length],
                       strokeStyle: 'transparent',
                       index: i
@@ -1080,14 +1716,17 @@
                 backgroundColor: tooltipBg,
                 padding: 11,
                 cornerRadius: 10,
-                titleFont: { family: '"Plus Jakarta Sans", sans-serif', size: 12, weight: '700' },
+                titleFont: { family: '"Inter", sans-serif', size: 12, weight: '700' },
                 bodyFont: { family: '"JetBrains Mono", monospace', size: 12 },
                 callbacks: {
                   label: (ctx) => {
                     const val = ctx.parsed;
                     const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                    const pct = total > 0 ? Math.round((val / total) * 100) : 0;
-                    const formatted = state.chartMode === 'tasks' ? `${val} tasks` : formatMoney(val);
+                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
+                    const curr = CURRENCIES[state.currency] || CURRENCIES.USD;
+                    const formatted = state.chartMode === 'tasks'
+                      ? `${val} tasks`
+                      : `${curr.symbol}${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                     return ` ${formatted} (${pct}%)`;
                   }
                 }
@@ -1118,17 +1757,20 @@
 
       switch (state.sort) {
         case 'pending':
-          list.sort((a, b) => getPendingPayout(b) - getPendingPayout(a));
+          list.sort((a, b) => {
+            const diff = getPendingPayoutUSD(b) - getPendingPayoutUSD(a);
+            if (Math.abs(diff) > 0.001) return diff;
+            return getExpectedPayoutUSD(b) - getExpectedPayoutUSD(a);
+          });
           break;
         case 'tasks':
           list.sort((a, b) => (Number(b.tasks) || 0) - (Number(a.tasks) || 0));
           break;
         case 'payout':
-          list.sort((a, b) => getExpectedPayout(b) - getExpectedPayout(a));
+          list.sort((a, b) => getExpectedPayoutUSD(b) - getExpectedPayoutUSD(a));
           break;
-        case 'recent':
-        default:
-          list.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+        case 'name':
+          list.sort((a, b) => a.name.localeCompare(b.name));
           break;
       }
 
@@ -1149,26 +1791,25 @@
       emptyState.classList.add('hidden');
 
       grid.innerHTML = filtered.map(project => {
-        const expected = getExpectedPayout(project);
-        const received = Math.max(0, Number(project.received) || 0);
-        const pending = getPendingPayout(project);
-        const paidPct = expected > 0 ? Math.min(100, Math.round((received / expected) * 100)) : (received > 0 ? 100 : 0);
+        const expectedUSD = getExpectedPayoutUSD(project);
+        const receivedUSD = Math.max(0, Number(project.received) || 0);
+        const pendingUSD = getPendingPayoutUSD(project);
+        const paidPct = expectedUSD > 0 ? Math.min(100, Math.round((receivedUSD / expectedUSD) * 100)) : (receivedUSD > 0 ? 100 : 0);
         const st = STATUS_STYLES[project.status] || STATUS_STYLES['Active'];
 
         const pricingBadge = project.pricingType === 'per_task'
-          ? `${formatMoney(project.ratePerTask)} / task`
-          : `Fixed Payout`;
+          ? `Per-Task • ${formatMoney(project.ratePerTask)}/task`
+          : `Fixed Total`;
 
         const popClass = poppedProjectId === project.id ? 'animate-pop' : '';
 
         return `
-          <article data-id="${escapeHtml(project.id)}" class="group rounded-2xl p-5 sm:p-6 bg-white dark:bg-[#111827]/95 border border-slate-200/90 dark:border-white/[0.08] hover:border-indigo-500/40 dark:hover:border-indigo-500/40 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-5">
+          <article data-id="${escapeHtml(project.id)}" class="group rounded-2xl p-5 sm:p-6 bg-white/95 dark:bg-[#111827]/95 backdrop-blur-md border border-slate-200/90 dark:border-white/[0.08] hover:border-indigo-500/40 dark:hover:border-indigo-500/40 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-5">
             
-            <!-- Card Top: Title, Status Pill Selector & Action Icons -->
+            <!-- Card Top: Status Badge Dropdown, Pricing Mode & Edit/Delete -->
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0 flex-1">
                 <div class="flex items-center flex-wrap gap-2 mb-1.5">
-                  <!-- Interactive Status Dropdown Badge -->
                   <div class="relative inline-flex items-center">
                     <span class="w-2 h-2 rounded-full ${st.dot} absolute left-2.5 pointer-events-none"></span>
                     <select aria-label="Change project status" onchange="handleStatusChange('${escapeHtml(project.id)}', this.value)"
@@ -1183,7 +1824,6 @@
                     </svg>
                   </div>
 
-                  <!-- Pricing Mode Tag -->
                   <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800/90 text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-white/[0.06]">
                     ${pricingBadge}
                   </span>
@@ -1194,7 +1834,7 @@
                 </h3>
               </div>
 
-              <!-- Edit & Delete Buttons -->
+              <!-- Edit & Delete Actions -->
               <div class="flex items-center gap-1 shrink-0">
                 <button type="button" onclick="openEditProjectModal('${escapeHtml(project.id)}')" title="Edit Project" aria-label="Edit Project"
                   class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
@@ -1224,7 +1864,7 @@
                 </div>
               </div>
 
-              <!-- Tactile Quick Stepper Buttons (-1, +1, +5) -->
+              <!-- Quick Stepper Buttons (-1, +1, +5) -->
               <div class="flex items-center gap-1.5">
                 <button type="button" onclick="adjustProjectTasks('${escapeHtml(project.id)}', -1)" aria-label="Decrease tasks by 1"
                   class="h-9 min-w-[38px] px-2.5 rounded-xl font-mono text-xs sm:text-sm font-bold bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-95 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/[0.08] shadow-xs transition cursor-pointer">
@@ -1241,18 +1881,18 @@
               </div>
             </div>
 
-            <!-- Financial Breakdown & Progress Bar -->
+            <!-- Financial Breakdown & Collection Progress -->
             <div class="space-y-3">
               <div class="grid grid-cols-3 gap-2.5">
                 <!-- Expected Payout -->
                 <div class="rounded-xl p-2.5 bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/[0.05]">
                   <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Expected</span>
                   <span class="text-sm sm:text-base font-bold font-mono tabular-nums text-slate-900 dark:text-white mt-0.5 block">
-                    ${formatMoney(expected)}
+                    ${formatMoney(expectedUSD)}
                   </span>
                 </div>
 
-                <!-- Payout Received (Click to Edit Inline) -->
+                <!-- Payout Received (Click to Edit Inline in USD) -->
                 <div class="rounded-xl p-2.5 bg-emerald-500/[0.06] border border-emerald-500/20">
                   <div class="flex items-center justify-between">
                     <span class="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Received</span>
@@ -1260,34 +1900,34 @@
                       <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
                   </div>
-                  <button type="button" onclick="enableInlineReceivedEdit('${escapeHtml(project.id)}', this)" title="Click to edit amount received"
+                  <button type="button" onclick="enableInlineReceivedEdit('${escapeHtml(project.id)}', this)" title="Click to edit amount received (USD)"
                     class="text-sm sm:text-base font-bold font-mono tabular-nums text-emerald-600 dark:text-emerald-400 hover:underline mt-0.5 block text-left w-full cursor-text">
-                    ${formatMoney(received)}
+                    ${formatMoney(receivedUSD)}
                   </button>
                 </div>
 
                 <!-- Pending Payout -->
-                <div class="rounded-xl p-2.5 ${pending > 0.009 ? 'bg-amber-500/[0.07] border-amber-500/25' : 'bg-slate-50/70 dark:bg-slate-800/40 border-slate-200/60 dark:border-white/[0.05]'} border">
-                  <span class="text-[10px] font-semibold uppercase tracking-wider ${pending > 0.009 ? 'text-amber-700 dark:text-amber-400' : 'text-slate-400'} block">Pending</span>
-                  <span class="text-sm sm:text-base font-bold font-mono tabular-nums ${pending > 0.009 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'} mt-0.5 block">
-                    ${formatMoney(pending)}
+                <div class="rounded-xl p-2.5 ${pendingUSD > 0.009 ? 'bg-amber-500/[0.08] border-amber-500/30' : 'bg-slate-50/70 dark:bg-slate-800/40 border-slate-200/60 dark:border-white/[0.05]'} border">
+                  <span class="text-[10px] font-semibold uppercase tracking-wider ${pendingUSD > 0.009 ? 'text-amber-700 dark:text-amber-400' : 'text-slate-400'} block">Pending</span>
+                  <span class="text-sm sm:text-base font-bold font-mono tabular-nums ${pendingUSD > 0.009 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'} mt-0.5 block">
+                    ${formatMoney(pendingUSD)}
                   </span>
                 </div>
               </div>
 
-              <!-- Paid vs Pending Progress Bar + Quick Settle CTA -->
+              <!-- Paid vs Pending Progress Bar + One-Click Mark Paid -->
               <div class="space-y-1.5">
                 <div class="flex items-center justify-between text-[11px]">
                   <span class="font-medium text-slate-500 dark:text-slate-400">
-                    Payout Collected: <strong class="font-mono text-slate-700 dark:text-slate-200">${paidPct}%</strong>
+                    Collected: <strong class="font-mono text-slate-700 dark:text-slate-200">${paidPct}%</strong>
                   </span>
-                  ${pending > 0.009 ? `
-                    <button type="button" onclick="markProjectFullyPaid('${escapeHtml(project.id)}')"
+                  ${pendingUSD > 0.009 ? `
+                    <button type="button" onclick="markProjectPaid('${escapeHtml(project.id)}')"
                       class="font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 inline-flex items-center gap-1 transition cursor-pointer">
                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
-                      Mark Fully Paid
+                      Mark Paid
                     </button>
                   ` : `
                     <span class="font-semibold text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1">
@@ -1304,14 +1944,14 @@
               </div>
             </div>
 
-            <!-- Quick Editable Note Snippet -->
+            <!-- Click-to-Edit Notes Preview -->
             <div class="pt-3 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between gap-2">
-              <button type="button" onclick="enableInlineNoteEdit('${escapeHtml(project.id)}', this)" title="Click to edit note"
+              <button type="button" onclick="enableInlineNoteEdit('${escapeHtml(project.id)}', this)" title="Click to add or edit notes"
                 class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-left truncate flex-1 flex items-center gap-1.5 cursor-text">
                 <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                 </svg>
-                <span class="truncate">${project.notes ? escapeHtml(project.notes) : '<em class="opacity-60">Add a quick note...</em>'}</span>
+                <span class="truncate">${project.notes ? escapeHtml(project.notes) : '<em class="opacity-60">Add optional note...</em>'}</span>
               </button>
             </div>
 
@@ -1327,7 +1967,7 @@
     }
 
     // =========================================================================
-    // 8. DIRECT CARD INTERACTIONS (TASKS, PAYMENTS, STATUS, NOTES)
+    // 8. DIRECT PROJECT CARD INTERACTIONS
     // =========================================================================
     window.adjustProjectTasks = function(id, delta) {
       const project = state.projects.find(p => p.id === id);
@@ -1336,8 +1976,7 @@
       if (nextTasks === project.tasks && delta < 0) return;
 
       project.tasks = nextTasks;
-      project.updatedAt = Date.now();
-      saveState();
+      saveState(true);
       renderAll(id);
     };
 
@@ -1356,21 +1995,14 @@
       const commit = () => {
         if (committed) return;
         committed = true;
-        const val = Math.max(0, parseInt(input.value, 10) || 0);
-        project.tasks = val;
-        project.updatedAt = Date.now();
-        saveState();
+        project.tasks = Math.max(0, parseInt(input.value, 10) || 0);
+        saveState(true);
         renderAll(id);
       };
 
       input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          commit();
-        } else if (e.key === 'Escape') {
-          committed = true;
-          renderProjectsGrid();
-        }
+        if (e.key === 'Enter') { e.preventDefault(); commit(); }
+        else if (e.key === 'Escape') { committed = true; renderProjectsGrid(); }
       });
       input.addEventListener('blur', commit);
 
@@ -1388,27 +2020,21 @@
       input.min = '0';
       input.step = '0.01';
       input.value = Number(project.received) || 0;
+      input.title = 'Enter amount received in USD';
       input.className = 'w-full h-7 px-1.5 mt-0.5 rounded-md font-mono font-bold text-sm bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500 focus:outline-none';
 
       let committed = false;
       const commit = () => {
         if (committed) return;
         committed = true;
-        const val = Math.max(0, parseFloat(input.value) || 0);
-        project.received = val;
-        project.updatedAt = Date.now();
-        saveState();
+        project.received = Math.max(0, parseFloat(input.value) || 0);
+        saveState(true);
         renderAll();
       };
 
       input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          commit();
-        } else if (e.key === 'Escape') {
-          committed = true;
-          renderProjectsGrid();
-        }
+        if (e.key === 'Enter') { e.preventDefault(); commit(); }
+        else if (e.key === 'Escape') { committed = true; renderProjectsGrid(); }
       });
       input.addEventListener('blur', commit);
 
@@ -1432,19 +2058,13 @@
         if (committed) return;
         committed = true;
         project.notes = input.value.trim();
-        project.updatedAt = Date.now();
-        saveState();
+        saveState(true);
         renderProjectsGrid();
       };
 
       input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          commit();
-        } else if (e.key === 'Escape') {
-          committed = true;
-          renderProjectsGrid();
-        }
+        if (e.key === 'Enter') { e.preventDefault(); commit(); }
+        else if (e.key === 'Escape') { committed = true; renderProjectsGrid(); }
       });
       input.addEventListener('blur', commit);
 
@@ -1456,21 +2076,19 @@
       const project = state.projects.find(p => p.id === id);
       if (!project) return;
       project.status = newStatus;
-      project.updatedAt = Date.now();
-      saveState();
+      saveState(true);
       renderAll();
-      showToast(`Status updated to "${newStatus}"`, 'info');
+      showToast(`Status set to "${newStatus}"`, 'info');
     };
 
-    window.markProjectFullyPaid = function(id) {
+    window.markProjectPaid = function(id) {
       const project = state.projects.find(p => p.id === id);
       if (!project) return;
-      project.received = getExpectedPayout(project);
+      project.received = getExpectedPayoutUSD(project);
       project.status = 'Paid';
-      project.updatedAt = Date.now();
-      saveState();
+      saveState(true);
       renderAll();
-      showToast(`Marked "${project.name}" as fully paid!`, 'success');
+      showToast(`Marked "${project.name}" as Paid`, 'success');
     };
 
     window.confirmDeleteProject = function(id) {
@@ -1478,10 +2096,10 @@
       if (!project) return;
       openConfirm(
         'Delete Project',
-        `Are you sure you want to remove "${project.name}"? This action cannot be undone.`,
+        `Remove "${project.name}" from your tracker?`,
         () => {
           state.projects = state.projects.filter(p => p.id !== id);
-          saveState();
+          saveState(true);
           renderAll();
           showToast('Project deleted', 'info');
         }
@@ -1512,7 +2130,7 @@
       updateModalPreview();
     }
 
-    function getModalCalculatedExpected() {
+    function getModalExpectedUSD() {
       const tasks = Math.max(0, parseInt(document.getElementById('projectTasksInput').value, 10) || 0);
       if (modalPricingMode === 'per_task') {
         const rate = Math.max(0, parseFloat(document.getElementById('projectRateInput').value) || 0);
@@ -1522,12 +2140,12 @@
     }
 
     function updateModalPreview() {
-      const expected = getModalCalculatedExpected();
-      const received = Math.max(0, parseFloat(document.getElementById('projectReceivedInput').value) || 0);
-      const pending = Math.max(0, expected - received);
+      const expectedUSD = getModalExpectedUSD();
+      const receivedUSD = Math.max(0, parseFloat(document.getElementById('projectReceivedInput').value) || 0);
+      const pendingUSD = Math.max(0, expectedUSD - receivedUSD);
 
-      document.getElementById('modalPreviewExpected').textContent = formatMoney(expected);
-      document.getElementById('modalPreviewPending').textContent = formatMoney(pending);
+      document.getElementById('modalPreviewExpected').textContent = formatMoney(expectedUSD);
+      document.getElementById('modalPreviewPending').textContent = formatMoney(pendingUSD);
     }
 
     function openNewProjectModal() {
@@ -1581,7 +2199,7 @@
     }
 
     // =========================================================================
-    // 10. EXPORT CSV & JSON
+    // 10. CSV & JSON EXPORT / IMPORT
     // =========================================================================
     function downloadFile(filename, content, mimeType) {
       const blob = new Blob([content], { type: mimeType });
@@ -1601,22 +2219,22 @@
         'Status',
         'Pricing Mode',
         'Tasks Completed',
-        `Rate Per Task (${state.currency})`,
-        `Expected Payout (${state.currency})`,
-        `Payout Received (${state.currency})`,
-        `Pending Payout (${state.currency})`,
+        'Rate Per Task (USD)',
+        'Expected Payout (USD)',
+        'Payout Received (USD)',
+        'Pending Payout (USD)',
         'Notes'
       ];
 
       const rows = state.projects.map(p => [
         `"${(p.name || '').replace(/"/g, '""')}"`,
         `"${p.status}"`,
-        `"${p.pricingType === 'per_task' ? 'Per-Task Rate' : 'Fixed Payout'}"`,
+        `"${p.pricingType === 'per_task' ? 'Per-Task Rate' : 'Fixed Total'}"`,
         Number(p.tasks) || 0,
         p.pricingType === 'per_task' ? (Number(p.ratePerTask) || 0).toFixed(2) : '',
-        getExpectedPayout(p).toFixed(2),
+        getExpectedPayoutUSD(p).toFixed(2),
         (Number(p.received) || 0).toFixed(2),
-        getPendingPayout(p).toFixed(2),
+        getPendingPayoutUSD(p).toFixed(2),
         `"${(p.notes || '').replace(/"/g, '""')}"`
       ]);
 
@@ -1627,82 +2245,319 @@
     }
 
     function exportToJSON() {
-      const payload = {
-        exportedAt: new Date().toISOString(),
-        currency: state.currency,
-        projects: state.projects
-      };
       const dateStr = new Date().toISOString().slice(0, 10);
-      downloadFile(`project-payout-tracker-${dateStr}.json`, JSON.stringify(payload, null, 2), 'application/json');
+      downloadFile(`project-payout-tracker-${dateStr}.json`, JSON.stringify(buildSyncPayload(), null, 2), 'application/json');
       showToast('Exported JSON backup', 'success');
     }
 
+    // RFC-4180 compliant CSV parser
+    function parseCSVRows(text) {
+      const rows = [];
+      let row = [];
+      let field = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const next = text[i + 1];
+
+        if (inQuotes) {
+          if (ch === '"' && next === '"') {
+            field += '"';
+            i++;
+          } else if (ch === '"') {
+            inQuotes = false;
+          } else {
+            field += ch;
+          }
+        } else {
+          if (ch === '"') {
+            inQuotes = true;
+          } else if (ch === ',') {
+            row.push(field);
+            field = '';
+          } else if (ch === '\r' && next === '\n') {
+            row.push(field);
+            rows.push(row);
+            row = [];
+            field = '';
+            i++;
+          } else if (ch === '\n' || ch === '\r') {
+            row.push(field);
+            rows.push(row);
+            row = [];
+            field = '';
+          } else {
+            field += ch;
+          }
+        }
+      }
+
+      if (field.length > 0 || row.length > 0) {
+        row.push(field);
+        rows.push(row);
+      }
+      return rows.filter(r => r.some(cell => cell.trim() !== ''));
+    }
+
+    function handleImportedFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const content = String(e.target.result || '');
+          let importedProjects = [];
+
+          if (file.name.toLowerCase().endsWith('.json')) {
+            const parsed = JSON.parse(content);
+            const rawList = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.projects) ? parsed.projects : []);
+            importedProjects = rawList.map((item, idx) => ({
+              id: item.id || `proj-imp-${Date.now()}-${idx}`,
+              name: String(item.name || `Project ${idx + 1}`).trim(),
+              status: STATUS_STYLES[item.status] ? item.status : 'Active',
+              pricingType: item.pricingType === 'fixed' ? 'fixed' : 'per_task',
+              tasks: Math.max(0, parseInt(item.tasks, 10) || 0),
+              ratePerTask: Math.max(0, parseFloat(item.ratePerTask) || 0),
+              fixedPayout: Math.max(0, parseFloat(item.fixedPayout) || 0),
+              received: Math.max(0, parseFloat(item.received) || 0),
+              notes: String(item.notes || '').trim()
+            }));
+          } else {
+            // Parse CSV
+            const rows = parseCSVRows(content);
+            if (rows.length < 2) throw new Error('CSV has no data rows');
+
+            const headers = rows[0].map(h => h.trim().toLowerCase());
+            const idxName = headers.findIndex(h => h.includes('project'));
+            const idxStatus = headers.findIndex(h => h.includes('status'));
+            const idxMode = headers.findIndex(h => h.includes('mode') || h.includes('pricing'));
+            const idxTasks = headers.findIndex(h => h.includes('task') && !h.includes('rate'));
+            const idxRate = headers.findIndex(h => h.includes('rate'));
+            const idxExpected = headers.findIndex(h => h.includes('expected'));
+            const idxReceived = headers.findIndex(h => h.includes('received'));
+            const idxNotes = headers.findIndex(h => h.includes('note'));
+
+            importedProjects = rows.slice(1).map((cols, idx) => {
+              const name = (idxName >= 0 ? cols[idxName] : cols[0] || '').trim();
+              if (!name) return null;
+
+              const rawStatus = (idxStatus >= 0 ? cols[idxStatus] : 'Active').trim();
+              const status = STATUS_STYLES[rawStatus] ? rawStatus : 'Active';
+
+              const rawMode = (idxMode >= 0 ? cols[idxMode] : 'Per-Task Rate').trim().toLowerCase();
+              const isFixed = rawMode.includes('fixed');
+
+              const tasks = Math.max(0, parseInt(idxTasks >= 0 ? cols[idxTasks] : '0', 10) || 0);
+              const ratePerTask = Math.max(0, parseFloat(idxRate >= 0 ? cols[idxRate] : '0') || 0);
+              const expectedVal = Math.max(0, parseFloat(idxExpected >= 0 ? cols[idxExpected] : '0') || 0);
+              const received = Math.max(0, parseFloat(idxReceived >= 0 ? cols[idxReceived] : '0') || 0);
+              const notes = (idxNotes >= 0 ? cols[idxNotes] : '').trim();
+
+              return {
+                id: `proj-csv-${Date.now()}-${idx}`,
+                name,
+                status,
+                pricingType: isFixed ? 'fixed' : 'per_task',
+                tasks,
+                ratePerTask: isFixed ? 0 : ratePerTask,
+                fixedPayout: isFixed ? expectedVal : 0,
+                received,
+                notes
+              };
+            }).filter(Boolean);
+          }
+
+          if (importedProjects.length === 0) {
+            showToast('No valid projects found in file', 'error');
+            return;
+          }
+
+          openConfirm(
+            `Import ${importedProjects.length} Project${importedProjects.length === 1 ? '' : 's'}`,
+            `Replace your current project list with the ${importedProjects.length} project${importedProjects.length === 1 ? '' : 's'} from "${file.name}"?`,
+            () => {
+              state.projects = importedProjects;
+              saveState(true);
+              renderAll();
+              showToast(`Imported ${importedProjects.length} projects`, 'success');
+            }
+          );
+        } catch (err) {
+          console.error('Import error:', err);
+          showToast('Failed to parse imported file', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
     // =========================================================================
-    // 11. EVENT LISTENERS & INITIALIZATION
+    // 11. SYNC MODAL UI HELPERS
+    // =========================================================================
+    let activeSyncTab = 'gist';
+
+    function switchSyncTab(tab) {
+      activeSyncTab = tab;
+      const gistTabBtn = document.getElementById('syncTabGistBtn');
+      const fbTabBtn = document.getElementById('syncTabFirebaseBtn');
+      const gistPanel = document.getElementById('gistConfigPanel');
+      const fbPanel = document.getElementById('firebaseConfigPanel');
+
+      if (tab === 'gist') {
+        gistTabBtn.className = 'py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm';
+        fbTabBtn.className = 'py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+        gistPanel.classList.remove('hidden');
+        fbPanel.classList.add('hidden');
+      } else {
+        fbTabBtn.className = 'py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm';
+        gistTabBtn.className = 'py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+        fbPanel.classList.remove('hidden');
+        gistPanel.classList.add('hidden');
+      }
+    }
+
+    function populateSyncModalInputs() {
+      document.getElementById('githubTokenInput').value = syncConfig.githubToken || '';
+      document.getElementById('githubGistIdInput').value = syncConfig.gistId || '';
+      document.getElementById('firebaseUrlInput').value = syncConfig.firebaseUrl || '';
+      switchSyncTab(syncConfig.provider === 'firebase' ? 'firebase' : 'gist');
+    }
+
+    function openSyncModal() {
+      populateSyncModalInputs();
+      const modal = document.getElementById('syncModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeSyncModal() {
+      const modal = document.getElementById('syncModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // =========================================================================
+    // 12. INITIALIZATION & EVENT LISTENERS
     // =========================================================================
     document.addEventListener('DOMContentLoaded', () => {
-      loadState();
+      loadLocalState();
 
       // Sync UI controls with loaded state
       const currencySelect = document.getElementById('currencySelect');
       currencySelect.value = state.currency;
-      updateCurrencySymbols();
+      updateRateBadgeUI();
       applyTheme();
 
       // Sync Doughnut Mode Buttons
+      function updateDoughnutModeButtons() {
+        const earningsBtn = document.getElementById('modeEarningsBtn');
+        const tasksBtn = document.getElementById('modeTasksBtn');
+        const sub = document.getElementById('doughnutSubtitle');
+        if (state.chartMode === 'earnings') {
+          earningsBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm';
+          tasksBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+          sub.textContent = 'Share of expected earnings by project';
+        } else {
+          tasksBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm';
+          earningsBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+          sub.textContent = 'Share of completed tasks by project';
+        }
+      }
       updateDoughnutModeButtons();
 
-      // Initial render
+      // Render dashboard immediately
       renderAll();
+
+      // Check for #sync=... Magic Sync Link in URL hash, or pull if already configured
+      checkMagicSyncUrlHash();
+      if (isCloudConfigured()) {
+        updateSyncStatusUI('synced');
+        pullFromCloud(false);
+      } else {
+        updateSyncStatusUI('local');
+      }
+
+      // Auto-pull newer cloud state when returning to this browser tab/app
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && isCloudConfigured()) {
+          pullFromCloud(false);
+        }
+      });
+      window.addEventListener('focus', () => {
+        if (isCloudConfigured()) {
+          pullFromCloud(false);
+        }
+      });
 
       // Currency Switcher
       currencySelect.addEventListener('change', (e) => {
         state.currency = e.target.value;
-        updateCurrencySymbols();
-        saveState();
+        updateRateBadgeUI();
+        saveState(true);
         renderAll();
         updateModalPreview();
-        showToast(`Currency switched to ${state.currency}`, 'info');
+      });
+
+      // Editable Exchange Rate Modal
+      document.getElementById('editRateBtn').addEventListener('click', () => {
+        if (state.currency === 'USD') return;
+        document.getElementById('rateModalCurrencyLabel').textContent = state.currency;
+        document.getElementById('rateModalCodeLabel').textContent = state.currency;
+        document.getElementById('rateMultiplierInput').value = state.exchangeRates[state.currency] || 1;
+        const modal = document.getElementById('rateModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      });
+
+      document.getElementById('cancelRateModalBtn').addEventListener('click', () => {
+        document.getElementById('rateModal').classList.add('hidden');
+        document.getElementById('rateModal').classList.remove('flex');
+      });
+
+      document.getElementById('saveRateModalBtn').addEventListener('click', () => {
+        const val = parseFloat(document.getElementById('rateMultiplierInput').value);
+        if (val > 0) {
+          state.exchangeRates[state.currency] = val;
+          updateRateBadgeUI();
+          saveState(true);
+          renderAll();
+          showToast(`Updated rate: 1 USD = ${val} ${state.currency}`, 'success');
+        }
+        document.getElementById('rateModal').classList.add('hidden');
+        document.getElementById('rateModal').classList.remove('flex');
       });
 
       // Theme Toggle
       document.getElementById('themeToggleBtn').addEventListener('click', () => {
         state.theme = state.theme === 'dark' ? 'light' : 'dark';
-        saveState();
+        saveState(false);
         applyTheme();
       });
 
-      // Exports
+      // Import / Export Handlers
+      const fileInput = document.getElementById('importFileInput');
+      document.getElementById('importBtn').addEventListener('click', () => {
+        fileInput.value = '';
+        fileInput.click();
+      });
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleImportedFile(e.target.files[0]);
+        }
+      });
       document.getElementById('exportCsvBtn').addEventListener('click', exportToCSV);
       document.getElementById('exportJsonBtn').addEventListener('click', exportToJSON);
 
-      // Doughnut Mode Switcher
-      function updateDoughnutModeButtons() {
-        const tasksBtn = document.getElementById('modeTasksBtn');
-        const earningsBtn = document.getElementById('modeEarningsBtn');
-        const sub = document.getElementById('doughnutSubtitle');
-        if (state.chartMode === 'tasks') {
-          tasksBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm';
-          earningsBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
-          sub.textContent = 'Share of completed tasks across projects';
-        } else {
-          earningsBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm';
-          tasksBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
-          sub.textContent = 'Share of expected revenue across projects';
-        }
-      }
-
-      document.getElementById('modeTasksBtn').addEventListener('click', () => {
-        state.chartMode = 'tasks';
-        updateDoughnutModeButtons();
-        saveState();
-        updateCharts();
-      });
-
+      // Doughnut Toggle Tabs
       document.getElementById('modeEarningsBtn').addEventListener('click', () => {
         state.chartMode = 'earnings';
         updateDoughnutModeButtons();
-        saveState();
+        saveState(false);
+        updateCharts();
+      });
+      document.getElementById('modeTasksBtn').addEventListener('click', () => {
+        state.chartMode = 'tasks';
+        updateDoughnutModeButtons();
+        saveState(false);
         updateCharts();
       });
 
@@ -1721,28 +2576,25 @@
         });
       });
 
-      // Search & Sort
+      // Live Search & Sort
       document.getElementById('searchInput').addEventListener('input', (e) => {
         state.search = e.target.value;
         renderProjectsGrid();
       });
-
       document.getElementById('sortSelect').addEventListener('change', (e) => {
         state.sort = e.target.value;
         renderProjectsGrid();
       });
 
-      // New Project Modal Triggers
+      // New / Edit Project Modal
       document.getElementById('openNewProjectBtn').addEventListener('click', openNewProjectModal);
       document.getElementById('emptyNewProjectBtn').addEventListener('click', openNewProjectModal);
       document.getElementById('closeModalBtn').addEventListener('click', closeProjectModal);
       document.getElementById('cancelModalBtn').addEventListener('click', closeProjectModal);
 
-      // Modal Pricing Mode Toggle
       document.getElementById('pricingPerTaskBtn').addEventListener('click', () => setModalPricingMode('per_task'));
       document.getElementById('pricingFixedBtn').addEventListener('click', () => setModalPricingMode('fixed'));
 
-      // Modal Task Steppers & Live Preview Inputs
       document.getElementById('modalTaskMinus').addEventListener('click', () => {
         const inp = document.getElementById('projectTasksInput');
         inp.value = Math.max(0, (parseInt(inp.value, 10) || 0) - 1);
@@ -1759,12 +2611,10 @@
       });
 
       document.getElementById('fillFullReceivedBtn').addEventListener('click', () => {
-        const expected = getModalCalculatedExpected();
-        document.getElementById('projectReceivedInput').value = expected.toFixed(2);
+        document.getElementById('projectReceivedInput').value = getModalExpectedUSD().toFixed(2);
         updateModalPreview();
       });
 
-      // Save Project Form Submit
       document.getElementById('projectForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const nameInput = document.getElementById('projectNameInput');
@@ -1795,13 +2645,12 @@
               tasks,
               received,
               status,
-              notes,
-              updatedAt: Date.now()
+              notes
             };
           }
           showToast(`Updated "${name}"`, 'success');
         } else {
-          const newProj = {
+          state.projects.unshift({
             id: 'proj-' + Date.now(),
             name,
             pricingType: modalPricingMode,
@@ -1810,52 +2659,154 @@
             tasks,
             received,
             status,
-            notes,
-            updatedAt: Date.now()
-          };
-          state.projects.unshift(newProj);
+            notes
+          });
           showToast(`Added "${name}"`, 'success');
         }
 
-        saveState();
+        saveState(true);
         closeProjectModal();
         renderAll();
       });
 
-      // Confirm Dialog Buttons
+      // Cloud Sync Modal Events
+      document.getElementById('openSyncModalBtn').addEventListener('click', openSyncModal);
+      document.getElementById('syncStatusPill').addEventListener('click', openSyncModal);
+      document.getElementById('closeSyncModalBtn').addEventListener('click', closeSyncModal);
+
+      document.getElementById('syncTabGistBtn').addEventListener('click', () => switchSyncTab('gist'));
+      document.getElementById('syncTabFirebaseBtn').addEventListener('click', () => switchSyncTab('firebase'));
+
+      document.getElementById('saveSyncConfigBtn').addEventListener('click', async () => {
+        if (activeSyncTab === 'gist') {
+          const token = document.getElementById('githubTokenInput').value.trim();
+          const gistId = document.getElementById('githubGistIdInput').value.trim();
+          if (!token) {
+            showToast('Please enter a GitHub Personal Access Token', 'error');
+            return;
+          }
+          syncConfig.provider = 'gist';
+          syncConfig.githubToken = token;
+          syncConfig.gistId = gistId;
+        } else {
+          const fbUrl = document.getElementById('firebaseUrlInput').value.trim();
+          if (!fbUrl) {
+            showToast('Please enter a Firebase Realtime Database URL', 'error');
+            return;
+          }
+          syncConfig.provider = 'firebase';
+          syncConfig.firebaseUrl = fbUrl;
+        }
+
+        saveSyncConfig();
+        showToast('Connecting to cloud...', 'info');
+        await pullFromCloud(false);
+        if (isCloudConfigured()) {
+          await pushToCloud();
+        }
+      });
+
+      document.getElementById('manualPullBtn').addEventListener('click', async () => {
+        if (!isCloudConfigured()) {
+          showToast('Connect GitHub Gist or Firebase first', 'error');
+          return;
+        }
+        await pullFromCloud(true);
+      });
+
+      document.getElementById('disconnectSyncBtn').addEventListener('click', () => {
+        syncConfig = { provider: 'none', githubToken: '', gistId: '', firebaseUrl: '' };
+        saveSyncConfig();
+        populateSyncModalInputs();
+        updateSyncStatusUI('local');
+        showToast('Cloud sync disconnected', 'info');
+      });
+
+      document.getElementById('copyMagicLinkBtn').addEventListener('click', () => {
+        if (!isCloudConfigured()) {
+          showToast('Connect GitHub Gist or Firebase first', 'error');
+          return;
+        }
+        const key = encodeSyncKey();
+        const baseUrl = window.location.origin + window.location.pathname + window.location.search;
+        copyTextToClipboard(`${baseUrl}#sync=${key}`, 'Magic Sync Link copied! Open it on your other device.');
+      });
+
+      document.getElementById('copySyncKeyBtn').addEventListener('click', () => {
+        if (!isCloudConfigured()) {
+          showToast('Connect GitHub Gist or Firebase first', 'error');
+          return;
+        }
+        copyTextToClipboard(encodeSyncKey(), 'Sync Key copied to clipboard');
+      });
+
+      document.getElementById('applySyncKeyBtn').addEventListener('click', async () => {
+        const key = document.getElementById('pasteSyncKeyInput').value.trim();
+        if (!key) {
+          showToast('Paste a valid Sync Key first', 'error');
+          return;
+        }
+        if (decodeAndApplySyncKey(key)) {
+          document.getElementById('pasteSyncKeyInput').value = '';
+          showToast('Sync Key applied! Pulling data...', 'success');
+          await pullFromCloud(true);
+        } else {
+          showToast('Invalid Sync Key format', 'error');
+        }
+      });
+
+      // GitHub Pages Deploy Guide Modal
+      document.getElementById('openDeployGuideBtn').addEventListener('click', () => {
+        const modal = document.getElementById('deployGuideModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      });
+      ['closeDeployGuideBtn', 'doneDeployGuideBtn'].forEach(btnId => {
+        document.getElementById(btnId).addEventListener('click', () => {
+          const modal = document.getElementById('deployGuideModal');
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        });
+      });
+
+      // Reset to Default 7 Projects
+      document.getElementById('resetDefaultBtn').addEventListener('click', () => {
+        openConfirm(
+          'Reset to Default Projects',
+          'Restore your original 7 projects (Voces Mundi, Cueball, Starfruit, Trident, Rudder, Chameleon, Espresso)?',
+          () => {
+            state.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+            saveState(true);
+            renderAll();
+            showToast('Restored default 7 projects', 'info');
+          }
+        );
+      });
+
+      // Confirmation Dialog
       document.getElementById('confirmCancelBtn').addEventListener('click', closeConfirm);
       document.getElementById('confirmProceedBtn').addEventListener('click', () => {
         if (typeof confirmCallback === 'function') confirmCallback();
         closeConfirm();
       });
 
-      // Reset Sample Data
-      document.getElementById('resetSampleBtn').addEventListener('click', () => {
-        openConfirm(
-          'Reset Sample Data',
-          'This will replace your current projects with the 4 sample demo projects. Do you want to continue?',
-          () => {
-            state.projects = JSON.parse(JSON.stringify(SAMPLE_PROJECTS));
-            saveState();
-            renderAll();
-            showToast('Sample projects restored', 'info');
-          }
-        );
-      });
-
-      // Close modals on backdrop click or Escape key
-      ['projectModal', 'confirmModal'].forEach(modalId => {
+      // Backdrop & Escape Key Closing for All Modals
+      ['projectModal', 'syncModal', 'deployGuideModal', 'rateModal', 'confirmModal'].forEach(modalId => {
         document.getElementById(modalId).addEventListener('click', (e) => {
           if (e.target.id === modalId) {
-            modalId === 'projectModal' ? closeProjectModal() : closeConfirm();
+            e.target.classList.add('hidden');
+            e.target.classList.remove('flex');
           }
         });
       });
 
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-          closeProjectModal();
-          closeConfirm();
+          ['projectModal', 'syncModal', 'deployGuideModal', 'rateModal', 'confirmModal'].forEach(modalId => {
+            const el = document.getElementById(modalId);
+            el.classList.add('hidden');
+            el.classList.remove('flex');
+          });
         }
       });
     });
