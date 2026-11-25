@@ -1,238 +1,1864 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Work Log – projects, tasks &amp; payouts</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#f2f5fa;--panel:#fff;--ink:#101a33;--mute:#5d6985;--line:#dfe5f0;--brand:#3454ff;--brand-soft:#e6ebff;--gain:#0b8a5f;--gain-soft:#dcf5ea;--bar2:#b9c5ff;--danger:#c2312d;
---display:'Sora','Segoe UI',system-ui,sans-serif;--body:'DM Sans','Segoe UI',system-ui,sans-serif;color-scheme:light;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1324;--panel:#151d33;--ink:#e9eeff;--mute:#9aa6c6;--line:#26304d;--brand:#7c93ff;--brand-soft:#212c57;--gain:#3fd6a0;--gain-soft:#12362e;--bar2:#33417a;--danger:#ff8a85;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0d1324;--panel:#151d33;--ink:#e9eeff;--mute:#9aa6c6;--line:#26304d;--brand:#7c93ff;--brand-soft:#212c57;--gain:#3fd6a0;--gain-soft:#12362e;--bar2:#33417a;--danger:#ff8a85;color-scheme:dark}
-*{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
-.wrap{max-width:1040px;margin:0 auto;padding:28px 18px 64px}
-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px}
-h1{font:700 26px/1.15 var(--display);margin:0 0 4px;letter-spacing:-.02em}
-.sub{color:var(--mute);margin:0}
-select,input{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
-select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
-.hero{background:var(--brand);color:#fff;border-radius:22px;padding:26px 28px;display:grid;grid-template-columns:1.1fr 1.4fr;gap:26px;margin-bottom:18px}
-:root[data-theme="dark"] .hero,:root:not([data-theme="light"]) .hero{--hero-on:#0d1324}
-.hero .lbl{opacity:.8;font-size:14px}
-.big{font:700 clamp(38px,7vw,60px)/1.05 var(--display);letter-spacing:-.03em;margin:6px 0 14px;word-break:break-word}
-.chips{display:flex;gap:10px;flex-wrap:wrap}
-.chip{background:rgba(255,255,255,.16);border-radius:12px;padding:8px 12px;font-size:13px}
-.chip b{display:block;font:600 18px var(--display)}
-.chartbox h2{font:600 14px var(--display);margin:0 0 6px;opacity:.9}
-#chart{width:100%;height:auto;display:block}
-#chart text{fill:#fff;font:500 11px var(--body)}
-.grid{display:grid;grid-template-columns:1fr 1.2fr;gap:18px;margin-bottom:18px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}
-.panel h2{font:600 16px var(--display);margin:0 0 14px}
-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-form label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--mute);font-weight:500}
-form .full{grid-column:1/-1}
-button{font:600 15px var(--body);border:0;border-radius:10px;padding:12px 16px;cursor:pointer;background:var(--brand);color:#fff}
-:root[data-theme="dark"] button.primary,:root:not([data-theme="light"]) button.primary{color:#0d1324}
-button.ghost{background:transparent;color:var(--mute);border:1px solid var(--line);padding:8px 12px;font-size:13px}
-button.ghost:hover{color:var(--ink)}
-.proj{display:grid;grid-template-columns:minmax(80px,1.1fr) 2fr auto;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
-.proj:first-of-type{border-top:0}
-.proj .n{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.track{height:10px;background:var(--brand-soft);border-radius:99px;overflow:hidden}
-.fill{height:100%;background:var(--brand);border-radius:99px}
-.proj .v{text-align:right;font-variant-numeric:tabular-nums;font-size:13px;color:var(--mute)}
-.proj .v b{display:block;color:var(--ink);font-size:15px}
-.tools{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
-.tools h2{margin:0}
-.tablewrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-th{text-align:left;font-weight:500;font-size:13px;color:var(--mute);padding:8px 10px;border-bottom:1px solid var(--line)}
-td{padding:11px 10px;border-bottom:1px solid var(--line)}
-td.r,th.r{text-align:right}
-.pay{color:var(--gain);font-weight:600}
-.del{background:none;border:0;color:var(--mute);cursor:pointer;padding:4px 8px;font-size:18px;line-height:1}
-.del:hover{color:var(--danger)}
-.empty{text-align:center;color:var(--mute);padding:26px 10px}
-.empty button{margin-top:10px}
-.foot{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:14px}
-#status{color:var(--mute);font-size:12px}
-@media (max-width:760px){.hero,.grid{grid-template-columns:1fr}.hero{padding:22px 20px}}
-@media (prefers-reduced-motion:no-preference){.fill{transition:width .5s ease}}
-</style>
-</head>
-<body>
-<div class="wrap">
-<header>
-  <div>
-    <h1>Work log</h1>
-    <p class="sub">Add an entry each time you finish a task. Your totals and weekly chart update on their own.</p>
-  </div>
-  <label class="sub">Currency
-    <select id="cur" aria-label="Currency">
-      <option value="$">$ US dollar</option><option value="৳">৳ Taka</option><option value="€">€ Euro</option><option value="£">£ Pound</option>
-    </select>
-  </label>
-</header>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskPulse — Project Task & Payout Tracker</title>
 
-<section class="hero" aria-label="Summary">
-  <div>
-    <div class="lbl">Total earned</div>
-    <div class="big" id="total">0</div>
-    <div class="chips">
-      <div class="chip"><b id="s-tasks">0</b>tasks done</div>
-      <div class="chip"><b id="s-proj">0</b>projects</div>
-      <div class="chip"><b id="s-avg">0</b>per task</div>
-      <div class="chip"><b id="s-week">0</b>this week</div>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            obsidian: {
+              950: '#070A12',
+              900: '#0B0F19',
+              850: '#0F1524',
+              800: '#111827',
+              700: '#1E293B',
+            },
+            brand: {
+              500: '#6366F1',
+              600: '#4F46E5',
+              400: '#818CF8',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* Tabular numbers so counters and currencies never jitter on update */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Subtle top ambient glow in dark mode */
+    .dark body {
+      background-color: #0B0F19;
+      background-image:
+        radial-gradient(ellipse 80% 45% at 50% -15%, rgba(99, 102, 241, 0.14), transparent),
+        radial-gradient(ellipse 50% 35% at 85% 10%, rgba(16, 185, 129, 0.06), transparent);
+      background-attachment: fixed;
+    }
+
+    body {
+      background-color: #F8FAFC;
+      background-image:
+        radial-gradient(ellipse 80% 45% at 50% -15%, rgba(99, 102, 241, 0.08), transparent);
+      background-attachment: fixed;
+    }
+
+    /* Counter bump micro-animation */
+    @keyframes counterPop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.14); }
+      100% { transform: scale(1); }
+    }
+    .animate-pop {
+      animation: counterPop 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Custom sleek scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.45);
+    }
+
+    /* Hide number input spin buttons for cleaner UI */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+  </style>
+</head>
+<body class="font-sans text-slate-900 dark:text-slate-100 antialiased min-h-screen flex flex-col transition-colors duration-200 selection:bg-indigo-500 selection:text-white">
+
+  <!-- Sticky Top Navigation Bar -->
+  <header class="sticky top-0 z-30 backdrop-blur-xl bg-white/80 dark:bg-[#0B0F19]/80 border-b border-slate-200/80 dark:border-white/[0.08] transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between gap-3 py-3.5">
+
+        <!-- Brand & Auto-Save Status -->
+        <div class="flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25 text-white shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2.5">
+              <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">
+                Project Task & Payout Tracker
+              </h1>
+            </div>
+            <div id="saveStatusBadge" class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <span id="saveStatusDot" class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+              <span id="saveStatusText">All changes saved locally</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Controls: Currency, Theme, Export, New Project -->
+        <div class="flex items-center flex-wrap gap-2 sm:gap-2.5">
+          <!-- Currency Selector -->
+          <div class="relative">
+            <label for="currencySelect" class="sr-only">Currency</label>
+            <select id="currencySelect" aria-label="Select Currency"
+              class="appearance-none cursor-pointer h-9 pl-3 pr-8 rounded-xl text-xs sm:text-sm font-semibold font-mono bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/[0.08] focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition">
+              <option value="USD">$ USD</option>
+              <option value="BDT">৳ BDT</option>
+              <option value="EUR">€ EUR</option>
+              <option value="GBP">£ GBP</option>
+            </select>
+            <svg class="w-3.5 h-3.5 text-slate-400 pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+
+          <!-- Theme Toggle -->
+          <button id="themeToggleBtn" type="button" title="Toggle Dark / Light Mode" aria-label="Toggle theme"
+            class="h-9 w-9 rounded-xl flex items-center justify-center bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer">
+            <!-- Sun Icon (shown in dark mode) -->
+            <svg id="sunIcon" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <!-- Moon Icon (shown in light mode) -->
+            <svg id="moonIcon" class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </button>
+
+          <!-- Export CSV -->
+          <button id="exportCsvBtn" type="button"
+            class="h-9 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer">
+            <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span class="hidden sm:inline">Export CSV</span>
+            <span class="sm:hidden">CSV</span>
+          </button>
+
+          <!-- Export JSON -->
+          <button id="exportJsonBtn" type="button"
+            class="h-9 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200/80 dark:bg-[#111827] dark:hover:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] transition cursor-pointer">
+            <svg class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+            </svg>
+            <span class="hidden sm:inline">Export JSON</span>
+            <span class="sm:hidden">JSON</span>
+          </button>
+
+          <!-- + New Project Primary CTA -->
+          <button id="openNewProjectBtn" type="button"
+            class="h-9 px-3.5 sm:px-4 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white shadow-md shadow-indigo-600/25 transition cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>New Project</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+
+    <!-- 1. Executive KPI Summary Bento Row (4 Cards) -->
+    <section aria-label="Executive Summary" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+
+      <!-- KPI 1: Total Tasks Completed -->
+      <div class="rounded-2xl p-5 bg-white dark:bg-[#111827]/90 border border-slate-200/90 dark:border-white/[0.08] shadow-sm hover:border-indigo-500/30 transition">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Tasks Completed</span>
+          <div class="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div id="kpiTotalTasks" class="text-3xl font-bold font-mono tabular-nums tracking-tight text-slate-900 dark:text-white">
+          0
+        </div>
+        <p id="kpiTasksSub" class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5">
+          Across 0 projects
+        </p>
+      </div>
+
+      <!-- KPI 2: Total Expected Payout -->
+      <div class="rounded-2xl p-5 bg-white dark:bg-[#111827]/90 border border-slate-200/90 dark:border-white/[0.08] shadow-sm hover:border-indigo-500/30 transition">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Expected Payout</span>
+          <div class="w-8 h-8 rounded-xl bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+          </div>
+        </div>
+        <div id="kpiExpectedPayout" class="text-3xl font-bold font-mono tabular-nums tracking-tight text-slate-900 dark:text-white">
+          $0.00
+        </div>
+        <p id="kpiExpectedSub" class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+          Avg $0.00 per task
+        </p>
+      </div>
+
+      <!-- KPI 3: Payout Received + Collection Progress Bar -->
+      <div class="rounded-2xl p-5 bg-white dark:bg-[#111827]/90 border border-slate-200/90 dark:border-white/[0.08] shadow-sm hover:border-emerald-500/30 transition">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Payout Received</span>
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="flex items-baseline justify-between gap-2">
+          <div id="kpiReceivedPayout" class="text-3xl font-bold font-mono tabular-nums tracking-tight text-emerald-600 dark:text-emerald-400">
+            $0.00
+          </div>
+          <span id="kpiCollectionPct" class="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            0%
+          </span>
+        </div>
+        <div class="w-full h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden mt-3">
+          <div id="kpiCollectionBar" class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- KPI 4: Pending Payout (Warm Amber Accent) -->
+      <div class="rounded-2xl p-5 bg-white dark:bg-[#111827]/90 border border-amber-500/25 dark:border-amber-500/25 shadow-sm relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-amber-500/[0.04] to-transparent pointer-events-none"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400/90">Pending Payout</span>
+            <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+          <div id="kpiPendingPayout" class="text-3xl font-bold font-mono tabular-nums tracking-tight text-amber-600 dark:text-amber-400">
+            $0.00
+          </div>
+          <p id="kpiPendingSub" class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+            0 projects awaiting payout
+          </p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 2. Visual Analytics & Insights Section -->
+    <section aria-label="Visual Analytics" class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
+
+      <!-- Chart 1: Earnings & Payout Status by Project (Stacked Bar) -->
+      <div class="lg:col-span-7 rounded-2xl p-5 sm:p-6 bg-white dark:bg-[#111827]/90 border border-slate-200/90 dark:border-white/[0.08] shadow-sm flex flex-col justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 dark:text-white">Earnings & Payout Status by Project</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Comparing collected payouts vs. remaining pending balance</p>
+          </div>
+          <div class="flex items-center gap-3 text-xs font-medium">
+            <span class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+              <span class="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block"></span> Received
+            </span>
+            <span class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+              <span class="w-2.5 h-2.5 rounded-sm bg-amber-500 inline-block"></span> Pending
+            </span>
+          </div>
+        </div>
+        <div class="relative w-full h-[250px] sm:h-[275px]">
+          <canvas id="payoutBarChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 2: Task & Revenue Distribution (Doughnut + Insight Badges) -->
+      <div class="lg:col-span-5 rounded-2xl p-5 sm:p-6 bg-white dark:bg-[#111827]/90 border border-slate-200/90 dark:border-white/[0.08] shadow-sm flex flex-col justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 dark:text-white">Distribution & Insights</h2>
+            <p id="doughnutSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Share of completed tasks across projects</p>
+          </div>
+          <!-- Segmented Toggle: Tasks vs Earnings -->
+          <div class="inline-flex p-0.5 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-white/[0.06]">
+            <button id="modeTasksBtn" type="button"
+              class="px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm">
+              Tasks
+            </button>
+            <button id="modeEarningsBtn" type="button"
+              class="px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+              Earnings
+            </button>
+          </div>
+        </div>
+
+        <div class="relative w-full h-[185px] sm:h-[195px] flex items-center justify-center">
+          <canvas id="distributionDoughnutChart"></canvas>
+        </div>
+
+        <!-- Key Insight Badges -->
+        <div class="grid grid-cols-3 gap-2 pt-4 mt-4 border-t border-slate-100 dark:border-white/[0.06]">
+          <div class="rounded-xl p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/[0.04]">
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Top Earner</div>
+            <div id="insightTopEarner" class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate mt-0.5">—</div>
+            <div id="insightTopEarnerVal" class="text-[11px] font-mono text-indigo-600 dark:text-indigo-400 mt-0.5">$0</div>
+          </div>
+          <div class="rounded-xl p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/[0.04]">
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Best Rate/Task</div>
+            <div id="insightBestRateProject" class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate mt-0.5">—</div>
+            <div id="insightBestRateVal" class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">$0/task</div>
+          </div>
+          <div class="rounded-xl p-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/[0.04]">
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Collected</div>
+            <div id="insightCollectionRate" class="text-sm font-bold font-mono text-slate-800 dark:text-slate-100 mt-0.5">0%</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">of expected</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 3. Interactive Project Tracker Controls & Grid -->
+    <section aria-label="Projects List" class="space-y-4">
+
+      <!-- Filter Pills, Search & Sort Bar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white dark:bg-[#111827]/90 p-3.5 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm">
+        
+        <!-- Filter Pills -->
+        <div id="filterPills" class="flex items-center flex-wrap gap-1.5">
+          <button type="button" data-filter="ALL" class="filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer bg-indigo-600 text-white shadow-sm">
+            All Projects <span class="ml-1 opacity-80 font-mono" id="count-ALL">0</span>
+          </button>
+          <button type="button" data-filter="Active" class="filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700/80">
+            Active <span class="ml-1 opacity-75 font-mono" id="count-Active">0</span>
+          </button>
+          <button type="button" data-filter="Pending Payout" class="filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700/80">
+            Pending Payout <span class="ml-1 opacity-75 font-mono" id="count-Pending Payout">0</span>
+          </button>
+          <button type="button" data-filter="Paid" class="filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700/80">
+            Paid <span class="ml-1 opacity-75 font-mono" id="count-Paid">0</span>
+          </button>
+        </div>
+
+        <!-- Search & Sort -->
+        <div class="flex items-center gap-2.5">
+          <div class="relative flex-1 sm:w-56">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input id="searchInput" type="text" placeholder="Search projects..."
+              class="w-full h-9 pl-9 pr-3 rounded-xl text-xs sm:text-sm bg-slate-100 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 placeholder-slate-400 border border-slate-200/80 dark:border-white/[0.06] focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition" />
+          </div>
+
+          <div class="relative">
+            <select id="sortSelect" aria-label="Sort projects"
+              class="appearance-none cursor-pointer h-9 pl-3 pr-8 rounded-xl text-xs sm:text-sm font-medium bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-white/[0.06] focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition">
+              <option value="recent">Recently Updated</option>
+              <option value="pending">Highest Pending</option>
+              <option value="tasks">Most Tasks</option>
+              <option value="payout">Highest Payout</option>
+            </select>
+            <svg class="w-3.5 h-3.5 text-slate-400 pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Interactive Project Cards Grid -->
+      <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+        <!-- Rendered dynamically by JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden rounded-2xl p-10 text-center bg-white dark:bg-[#111827]/90 border border-dashed border-slate-300 dark:border-white/[0.12]">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 dark:text-white">No matching projects found</h3>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+          Try clearing your search or filter, or create a new project card to start tracking tasks and payouts.
+        </p>
+        <button id="emptyNewProjectBtn" type="button"
+          class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer">
+          + Add Project
+        </button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Minimalist Footer -->
+  <footer class="border-t border-slate-200/80 dark:border-white/[0.06] mt-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex items-center gap-2">
+        <span>Data stored privately in your browser's local storage.</span>
+        <span class="hidden sm:inline">•</span>
+        <span class="hidden sm:inline">Click any task count or payment amount to edit directly.</span>
+      </div>
+      <button id="resetSampleBtn" type="button"
+        class="text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 font-medium underline underline-offset-4 transition cursor-pointer">
+        Reset Sample Data
+      </button>
+    </div>
+  </footer>
+
+  <!-- Add / Edit Project Modal -->
+  <div id="projectModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+    <div class="w-full max-w-lg rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/[0.1] shadow-2xl overflow-hidden transform transition-all">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/[0.08]">
+        <h3 id="modalTitle" class="text-lg font-bold text-slate-900 dark:text-white">New Project</h3>
+        <button id="closeModalBtn" type="button" aria-label="Close modal"
+          class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form id="projectForm" class="p-6 space-y-4">
+        <input type="hidden" id="editProjectId" />
+
+        <!-- Project Name -->
+        <div>
+          <label for="projectNameInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+            Project Name <span class="text-rose-500">*</span>
+          </label>
+          <input id="projectNameInput" type="text" required placeholder="e.g., AI Data Annotation — Batch 5"
+            class="w-full h-10 px-3.5 rounded-xl text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+          <p id="nameErrorMsg" class="hidden text-xs text-rose-500 mt-1">Please enter a project name.</p>
+        </div>
+
+        <!-- Pricing Type Toggle -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+            Payout Calculation Mode
+          </label>
+          <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-white/[0.08]">
+            <button type="button" id="pricingPerTaskBtn"
+              class="py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm">
+              Per-Task Rate
+            </button>
+            <button type="button" id="pricingFixedBtn"
+              class="py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+              Fixed Total Payout
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Rate / Fixed Amount + Tasks Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Tasks Completed -->
+          <div>
+            <label for="projectTasksInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+              Tasks Completed
+            </label>
+            <div class="flex items-center">
+              <button type="button" id="modalTaskMinus" class="h-10 px-3 rounded-l-xl bg-slate-100 dark:bg-slate-800 border border-r-0 border-slate-200 dark:border-white/[0.1] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-mono font-bold cursor-pointer">-</button>
+              <input id="projectTasksInput" type="number" min="0" step="1" value="0"
+                class="w-full h-10 px-3 text-center font-mono font-semibold text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              <button type="button" id="modalTaskPlus" class="h-10 px-3 rounded-r-xl bg-slate-100 dark:bg-slate-800 border border-l-0 border-slate-200 dark:border-white/[0.1] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-mono font-bold cursor-pointer">+</button>
+            </div>
+          </div>
+
+          <!-- Rate per Task OR Fixed Payout -->
+          <div id="rateInputGroup">
+            <label for="projectRateInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+              Rate per Task (<span class="currency-symbol">$</span>)
+            </label>
+            <input id="projectRateInput" type="number" min="0" step="0.01" placeholder="0.00"
+              class="w-full h-10 px-3.5 rounded-xl font-mono text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+          </div>
+
+          <div id="fixedInputGroup" class="hidden">
+            <label for="projectFixedInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+              Fixed Expected Payout (<span class="currency-symbol">$</span>)
+            </label>
+            <input id="projectFixedInput" type="number" min="0" step="0.01" placeholder="0.00"
+              class="w-full h-10 px-3.5 rounded-xl font-mono text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+          </div>
+        </div>
+
+        <!-- Payout Received & Status -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="projectReceivedInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                Payout Received (<span class="currency-symbol">$</span>)
+              </label>
+              <button type="button" id="fillFullReceivedBtn" class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer">
+                Match Expected
+              </button>
+            </div>
+            <input id="projectReceivedInput" type="number" min="0" step="0.01" value="0"
+              class="w-full h-10 px-3.5 rounded-xl font-mono text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+          </div>
+
+          <div>
+            <label for="projectStatusInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+              Project Status
+            </label>
+            <select id="projectStatusInput"
+              class="w-full h-10 px-3 rounded-xl text-sm font-medium bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+              <option value="Active">Active</option>
+              <option value="Pending Payout">Pending Payout</option>
+              <option value="Paid">Paid</option>
+              <option value="On Hold">On Hold</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Live Calculation Preview Box -->
+        <div class="rounded-xl p-3.5 bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-white/[0.06] flex items-center justify-between text-xs">
+          <div>
+            <span class="text-slate-500 dark:text-slate-400 block">Calculated Expected</span>
+            <span id="modalPreviewExpected" class="font-mono font-bold text-sm text-slate-900 dark:text-white">$0.00</span>
+          </div>
+          <div class="text-right">
+            <span class="text-slate-500 dark:text-slate-400 block">Pending Balance</span>
+            <span id="modalPreviewPending" class="font-mono font-bold text-sm text-amber-600 dark:text-amber-400">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div>
+          <label for="projectNotesInput" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
+            Quick Notes (Optional)
+          </label>
+          <textarea id="projectNotesInput" rows="2" placeholder="Deliverables, milestone notes, client payment schedule..."
+            class="w-full p-3 rounded-xl text-sm bg-slate-50 dark:bg-slate-900/90 text-slate-900 dark:text-white border border-slate-200 dark:border-white/[0.1] focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"></textarea>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-2.5 pt-2">
+          <button type="button" id="cancelModalBtn"
+            class="h-10 px-4 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+            Cancel
+          </button>
+          <button type="submit"
+            class="h-10 px-5 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/25 transition cursor-pointer">
+            Save Project
+          </button>
+        </div>
+      </form>
     </div>
   </div>
-  <div class="chartbox">
-    <h2>Payout per week</h2>
-    <svg id="chart" viewBox="0 0 560 190" role="img" aria-label="Weekly payout bar chart"></svg>
-  </div>
-</section>
 
-<div class="grid">
-  <section class="panel">
-    <h2>Add an entry</h2>
-    <form id="f">
-      <label class="full">Project name<input id="p" list="plist" required maxlength="60" placeholder="e.g. Logo design for Nova Café" autocomplete="off"><datalist id="plist"></datalist></label>
-      <label>Date<input id="d" type="date" required></label>
-      <label>Tasks completed<input id="t" type="number" min="0" step="1" value="1" required inputmode="numeric"></label>
-      <label class="full">Payout<input id="a" type="number" min="0" step="0.01" required inputmode="decimal" placeholder="0.00"></label>
-      <button class="primary full" type="submit">Save entry</button>
-    </form>
-  </section>
-  <section class="panel">
-    <h2>Where the money comes from</h2>
-    <div id="projects"></div>
-  </section>
-</div>
-
-<section class="panel">
-  <div class="tools">
-    <h2>All entries</h2>
-    <select id="flt" aria-label="Filter by project"><option value="">All projects</option></select>
+  <!-- Custom Confirmation Dialog (Replaces native confirm()) -->
+  <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm">
+    <div class="w-full max-w-sm rounded-2xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/[0.1] shadow-2xl p-6 space-y-4">
+      <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <div>
+          <h4 id="confirmTitle" class="text-base font-bold text-slate-900 dark:text-white">Confirm Action</h4>
+          <p id="confirmMessage" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Are you sure you want to proceed?</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button id="confirmCancelBtn" type="button"
+          class="h-9 px-4 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+          Cancel
+        </button>
+        <button id="confirmProceedBtn" type="button"
+          class="h-9 px-4 rounded-xl text-xs sm:text-sm font-semibold bg-rose-600 hover:bg-rose-500 text-white shadow-sm transition cursor-pointer">
+          Confirm
+        </button>
+      </div>
+    </div>
   </div>
-  <div class="tablewrap">
-    <table>
-      <thead><tr><th>Date</th><th>Project</th><th class="r">Tasks</th><th class="r">Payout</th><th></th></tr></thead>
-      <tbody id="rows"></tbody>
-    </table>
-  </div>
-  <div class="foot"><span id="status"></span><button class="ghost" id="sample" type="button">Load sample data</button><button class="ghost" id="clear" type="button">Clear all</button></div>
-</section>
-</div>
 
-<script>
-(function(){
-var S={entries:[],cur:'$'}, LS='worklog.v1', $=function(i){return document.getElementById(i)};
-var docRef=null;
-function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function money(n){var d=Math.abs(n-Math.round(n))<.005?0:2;return S.cur+Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:2})}
-function today(){var t=new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')}
-function wk(ds){var d=new Date(ds+'T00:00:00');var day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function fmtD(ds){return new Date(ds+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
-function short(ds){return new Date(ds+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'})}
-function save(){
-  try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}
-  if(docRef){docRef.set({entries:S.entries,cur:S.cur}).then(function(){$('status').textContent='Saved'}).catch(function(){$('status').textContent='Saved on this device only'})}
-}
-function render(){
-  var E=S.entries.slice().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:(b.id||0)-(a.id||0)});
-  var tot=0,tk=0,byP={},byW={};
-  E.forEach(function(e){tot+=e.pay;tk+=e.tasks;var p=byP[e.project]||(byP[e.project]={pay:0,tasks:0});p.pay+=e.pay;p.tasks+=e.tasks;var w=wk(e.date);byW[w]=(byW[w]||0)+e.pay});
-  var names=Object.keys(byP).sort(function(a,b){return byP[b].pay-byP[a].pay});
-  $('cur').value=S.cur;
-  $('total').textContent=money(tot);
-  $('s-tasks').textContent=tk;
-  $('s-proj').textContent=names.length;
-  $('s-avg').textContent=tk?money(tot/tk):money(0);
-  $('s-week').textContent=money(byW[wk(today())]||0);
-  // chart: last 8 weeks
-  var weeks=[],base=new Date(wk(today())+'T00:00:00');
-  for(var i=7;i>=0;i--){var d=new Date(base);d.setDate(d.getDate()-7*i);var k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');weeks.push(k)}
-  var max=Math.max.apply(null,weeks.map(function(k){return byW[k]||0}).concat([1])),h='';
-  weeks.forEach(function(k,i){
-    var v=byW[k]||0,bh=Math.round(v/max*125),x=14+i*68,cur=i===7;
-    h+='<g><title>Week of '+short(k)+': '+esc(money(v))+'</title>'
-     +'<rect x="'+x+'" y="'+(145-Math.max(bh,v?3:0))+'" width="52" height="'+Math.max(bh,v?3:0)+'" rx="8" fill="#fff" opacity="'+(cur?1:.55)+'"/>'
-     +(v?'<text x="'+(x+26)+'" y="'+(139-bh)+'" text-anchor="middle">'+esc(money(v))+'</text>':'')
-     +'<text x="'+(x+26)+'" y="168" text-anchor="middle" opacity=".85">'+short(k)+'</text></g>';
-  });
-  $('chart').innerHTML='<line x1="8" x2="552" y1="146" y2="146" stroke="#fff" opacity=".3"/>'+h;
-  // projects
-  var maxP=names.length?byP[names[0]].pay:1;
-  $('projects').innerHTML=names.length?names.map(function(n){var p=byP[n];
-    return '<div class="proj"><div class="n" title="'+esc(n)+'">'+esc(n)+'</div><div class="track"><div class="fill" style="width:'+(maxP?Math.max(p.pay/maxP*100,2):0)+'%"></div></div>'
-     +'<div class="v"><b>'+esc(money(p.pay))+'</b>'+p.tasks+' task'+(p.tasks===1?'':'s')+(p.tasks?' · '+esc(money(p.pay/p.tasks))+' each':'')+'</div></div>'}).join('')
-   :'<div class="empty">Your projects will rank here by how much each one paid.</div>';
-  // datalist + filter
-  $('plist').innerHTML=names.map(function(n){return '<option value="'+esc(n)+'">'}).join('');
-  var f=$('flt'),cv=f.value;
-  f.innerHTML='<option value="">All projects</option>'+names.map(function(n){return '<option value="'+esc(n)+'">'+esc(n)+'</option>'}).join('');
-  f.value=names.indexOf(cv)>-1?cv:'';
-  // rows
-  var shown=E.filter(function(e){return !f.value||e.project===f.value});
-  $('rows').innerHTML=shown.length?shown.map(function(e){
-    return '<tr><td>'+fmtD(e.date)+'</td><td>'+esc(e.project)+'</td><td class="r">'+e.tasks+'</td><td class="r pay">'+esc(money(e.pay))+'</td>'
-     +'<td class="r"><button class="del" data-id="'+e.id+'" aria-label="Delete entry">×</button></td></tr>'}).join('')
-   :'<tr><td colspan="5"><div class="empty">No entries yet. Add your first one above, or <button class="ghost" type="button" id="sample2">see it with sample data</button></div></td></tr>';
-  var s2=$('sample2');if(s2)s2.onclick=sample;
-}
-function sample(){
-  var P=[['Brand identity – Nova Café',[[2,5,320],[0,4,180]]],['Website copywriting',[[1,6,95],[3,3,140],[5,4,110]]],['Mobile app UI kit',[[4,8,450],[6,5,260]]],['Weekly newsletter',[[0,1,60],[2,1,60],[5,1,60]]]];
-  var b=new Date(wk(today())+'T00:00:00'),id=Date.now();
-  P.forEach(function(p){p[1].forEach(function(r){
-    var wkAgo=r[0],d=new Date(b);d.setDate(d.getDate()-7*Math.floor(wkAgo/2)-(wkAgo%2?2:0));if(d>new Date())d=new Date();
-    S.entries.push({id:id++,project:p[0],date:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),tasks:r[1],pay:r[2]})})});
-  save();render();
-}
-$('f').addEventListener('submit',function(ev){
-  ev.preventDefault();
-  var pr=$('p').value.trim(),d=$('d').value,t=parseInt($('t').value,10),a=parseFloat($('a').value);
-  if(!pr||!d||isNaN(t)||isNaN(a))return;
-  S.entries.push({id:Date.now(),project:pr,date:d,tasks:t,pay:a});
-  $('p').value='';$('a').value='';$('t').value='1';
-  save();render();$('p').focus();
-});
-$('rows').addEventListener('click',function(ev){
-  var b=ev.target.closest('.del');if(!b)return;
-  var id=Number(b.getAttribute('data-id'));
-  S.entries=S.entries.filter(function(e){return e.id!==id});save();render();
-});
-$('cur').addEventListener('change',function(){S.cur=this.value;save();render()});
-$('flt').addEventListener('change',render);
-$('sample').addEventListener('click',sample);
-$('clear').addEventListener('click',function(){
-  if(!S.entries.length)return;
-  if(this.getAttribute('data-sure')){S.entries=[];this.removeAttribute('data-sure');this.textContent='Clear all';save();render();return}
-  this.setAttribute('data-sure','1');this.textContent='Tap again to confirm';
-  var me=this;setTimeout(function(){me.removeAttribute('data-sure');me.textContent='Clear all'},3500);
-});
-$('d').value=today();
-try{var raw=localStorage.getItem(LS);if(raw){var o=JSON.parse(raw);if(o&&o.entries){S=o}}}catch(e){}
-render();
-// cloud copy so the log follows you across devices
-(async function(){
-  try{
-    if(!window.claude||!claude.use)return;
-    var user=await claude.use('user'),db=await claude.use('db');
-    if(!user||!db)return;
-    var id=await user.id();if(!id)return;
-    docRef=db.collection('data/users/'+id).doc('worklog');
-    var snap=await docRef.get();
-    if(snap.exists){var o=snap.data();if(o&&Array.isArray(o.entries)){S={entries:o.entries,cur:o.cur||'$'};try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}render()}}
-    else if(S.entries.length){save()}
-    $('status').textContent='Synced';
-  }catch(e){}
-})();
-})();
-</script>
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    // =========================================================================
+    // 1. STATE & CONSTANTS
+    // =========================================================================
+    const STORAGE_KEY = 'taskpulse_tracker_v1';
+
+    const CURRENCIES = {
+      USD: { symbol: '$', code: 'USD', locale: 'en-US' },
+      BDT: { symbol: '৳', code: 'BDT', locale: 'en-BD' },
+      EUR: { symbol: '€', code: 'EUR', locale: 'de-DE' },
+      GBP: { symbol: '£', code: 'GBP', locale: 'en-GB' }
+    };
+
+    const STATUS_STYLES = {
+      'Active': {
+        badge: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/25',
+        dot: 'bg-indigo-500'
+      },
+      'Pending Payout': {
+        badge: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/25',
+        dot: 'bg-amber-500'
+      },
+      'Paid': {
+        badge: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/25',
+        dot: 'bg-emerald-500'
+      },
+      'On Hold': {
+        badge: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/25',
+        dot: 'bg-slate-400'
+      }
+    };
+
+    const SAMPLE_PROJECTS = [
+      {
+        id: 'proj-1',
+        name: 'AI Model RLHF Evaluation — Batch 4',
+        pricingType: 'per_task', // 'per_task' | 'fixed'
+        ratePerTask: 18.50,
+        fixedPayout: 0,
+        tasks: 16,
+        received: 148.00,
+        status: 'Active',
+        notes: 'Currently at 16 tasks — aiming for 25 before Friday cutoff.',
+        updatedAt: Date.now() - 1000 * 60 * 15
+      },
+      {
+        id: 'proj-2',
+        name: 'Fintech Dashboard UI Redesign',
+        pricingType: 'fixed',
+        ratePerTask: 0,
+        fixedPayout: 1250.00,
+        tasks: 12,
+        received: 625.00,
+        status: 'Pending Payout',
+        notes: 'Final Figma prototype delivered; awaiting 50% milestone release.',
+        updatedAt: Date.now() - 1000 * 60 * 60 * 4
+      },
+      {
+        id: 'proj-3',
+        name: 'E-Commerce SEO Content Sprint',
+        pricingType: 'per_task',
+        ratePerTask: 25.00,
+        fixedPayout: 0,
+        tasks: 9,
+        received: 0,
+        status: 'Active',
+        notes: '9 of 15 product guides completed. Invoice triggers at 15 tasks.',
+        updatedAt: Date.now() - 1000 * 60 * 60 * 20
+      },
+      {
+        id: 'proj-4',
+        name: 'Mobile App Localization QA',
+        pricingType: 'per_task',
+        ratePerTask: 12.00,
+        fixedPayout: 0,
+        tasks: 20,
+        received: 240.00,
+        status: 'Paid',
+        notes: 'All 20 localization test suites verified & invoice settled.',
+        updatedAt: Date.now() - 1000 * 60 * 60 * 48
+      }
+    ];
+
+    let state = {
+      projects: [],
+      currency: 'USD',
+      theme: 'dark',
+      filter: 'ALL',
+      search: '',
+      sort: 'recent',
+      chartMode: 'tasks' // 'tasks' | 'earnings'
+    };
+
+    let barChartInstance = null;
+    let doughnutChartInstance = null;
+    let confirmCallback = null;
+    let modalPricingMode = 'per_task';
+
+    // =========================================================================
+    // 2. CALCULATION & FORMATTING HELPERS
+    // =========================================================================
+    function getExpectedPayout(project) {
+      if (project.pricingType === 'fixed') {
+        return Math.max(0, Number(project.fixedPayout) || 0);
+      }
+      return Math.max(0, (Number(project.tasks) || 0) * (Number(project.ratePerTask) || 0));
+    }
+
+    function getPendingPayout(project) {
+      const expected = getExpectedPayout(project);
+      const received = Math.max(0, Number(project.received) || 0);
+      return Math.max(0, expected - received);
+    }
+
+    function getEffectiveRate(project) {
+      const tasks = Number(project.tasks) || 0;
+      const expected = getExpectedPayout(project);
+      return tasks > 0 ? expected / tasks : (project.pricingType === 'per_task' ? Number(project.ratePerTask) || 0 : 0);
+    }
+
+    function formatMoney(amount, compact = false) {
+      const curr = CURRENCIES[state.currency] || CURRENCIES.USD;
+      const num = Number(amount) || 0;
+      if (compact && Math.abs(num) >= 10000) {
+        return curr.symbol + (num / 1000).toFixed(1) + 'k';
+      }
+      const hasDecimals = Math.abs(num % 1) > 0.001;
+      const formatted = num.toLocaleString('en-US', {
+        minimumFractionDigits: hasDecimals ? 2 : (state.currency === 'BDT' ? 0 : 2),
+        maximumFractionDigits: 2
+      });
+      return `${curr.symbol}${formatted}`;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str ?? '';
+      return div.innerHTML;
+    }
+
+    // =========================================================================
+    // 3. PERSISTENCE & FEEDBACK
+    // =========================================================================
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          state.projects = Array.isArray(parsed.projects) ? parsed.projects : JSON.parse(JSON.stringify(SAMPLE_PROJECTS));
+          state.currency = CURRENCIES[parsed.currency] ? parsed.currency : 'USD';
+          state.theme = parsed.theme === 'light' ? 'light' : 'dark';
+          state.chartMode = parsed.chartMode === 'earnings' ? 'earnings' : 'tasks';
+        } else {
+          state.projects = JSON.parse(JSON.stringify(SAMPLE_PROJECTS));
+        }
+      } catch (err) {
+        console.error('Failed to load state:', err);
+        state.projects = JSON.parse(JSON.stringify(SAMPLE_PROJECTS));
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          projects: state.projects,
+          currency: state.currency,
+          theme: state.theme,
+          chartMode: state.chartMode
+        }));
+        pulseSaveStatus();
+      } catch (err) {
+        console.error('Failed to save state:', err);
+      }
+    }
+
+    let saveTimeout = null;
+    function pulseSaveStatus() {
+      const dot = document.getElementById('saveStatusDot');
+      const text = document.getElementById('saveStatusText');
+      if (!dot || !text) return;
+      dot.classList.remove('bg-emerald-500');
+      dot.classList.add('bg-indigo-400', 'animate-ping');
+      text.textContent = 'Saving changes...';
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        dot.classList.remove('bg-indigo-400', 'animate-ping');
+        dot.classList.add('bg-emerald-500');
+        text.textContent = 'All changes saved locally';
+      }, 450);
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      const accent = type === 'success'
+        ? 'border-emerald-500/30 bg-slate-900/95 text-white'
+        : 'border-indigo-500/30 bg-slate-900/95 text-white';
+      const dotColor = type === 'success' ? 'bg-emerald-400' : 'bg-indigo-400';
+
+      toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-2.5 rounded-xl border ${accent} shadow-xl backdrop-blur-md text-xs font-medium transform translate-y-2 opacity-0 transition-all duration-200`;
+      toast.innerHTML = `<span class="w-2 h-2 rounded-full ${dotColor} shrink-0"></span><span>${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 220);
+      }, 2600);
+    }
+
+    function openConfirm(title, message, onProceed) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      confirmCallback = onProceed;
+      const modal = document.getElementById('confirmModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeConfirm() {
+      const modal = document.getElementById('confirmModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      confirmCallback = null;
+    }
+
+    // =========================================================================
+    // 4. THEME & CURRENCY APPLICATION
+    // =========================================================================
+    function applyTheme() {
+      const html = document.documentElement;
+      if (state.theme === 'dark') {
+        html.classList.add('dark');
+      } else {
+        html.classList.remove('dark');
+      }
+      updateCharts();
+    }
+
+    function updateCurrencySymbols() {
+      const curr = CURRENCIES[state.currency] || CURRENCIES.USD;
+      document.querySelectorAll('.currency-symbol').forEach(el => {
+        el.textContent = curr.symbol;
+      });
+    }
+
+    // =========================================================================
+    // 5. RENDER KPIs & INSIGHTS
+    // =========================================================================
+    function renderKPIsAndInsights() {
+      const projects = state.projects;
+      const totalTasks = projects.reduce((sum, p) => sum + (Number(p.tasks) || 0), 0);
+      const totalExpected = projects.reduce((sum, p) => sum + getExpectedPayout(p), 0);
+      const totalReceived = projects.reduce((sum, p) => sum + (Number(p.received) || 0), 0);
+      const totalPending = projects.reduce((sum, p) => sum + getPendingPayout(p), 0);
+
+      const activeCount = projects.filter(p => p.status === 'Active').length;
+      const pendingProjectsCount = projects.filter(p => getPendingPayout(p) > 0.009).length;
+      const collectionPct = totalExpected > 0 ? Math.min(100, Math.round((totalReceived / totalExpected) * 100)) : 0;
+      const avgPerTask = totalTasks > 0 ? totalExpected / totalTasks : 0;
+
+      // Update KPI Cards
+      document.getElementById('kpiTotalTasks').textContent = totalTasks.toLocaleString();
+      document.getElementById('kpiTasksSub').textContent = `${activeCount} active • ${projects.length} total project${projects.length === 1 ? '' : 's'}`;
+
+      document.getElementById('kpiExpectedPayout').textContent = formatMoney(totalExpected);
+      document.getElementById('kpiExpectedSub').textContent = `Avg ${formatMoney(avgPerTask)} per task`;
+
+      document.getElementById('kpiReceivedPayout').textContent = formatMoney(totalReceived);
+      document.getElementById('kpiCollectionPct').textContent = `${collectionPct}%`;
+      document.getElementById('kpiCollectionBar').style.width = `${collectionPct}%`;
+
+      document.getElementById('kpiPendingPayout').textContent = formatMoney(totalPending);
+      document.getElementById('kpiPendingSub').textContent = `${pendingProjectsCount} project${pendingProjectsCount === 1 ? '' : 's'} with balance due`;
+
+      // Update Insight Badges
+      if (projects.length === 0) {
+        document.getElementById('insightTopEarner').textContent = '—';
+        document.getElementById('insightTopEarnerVal').textContent = formatMoney(0);
+        document.getElementById('insightBestRateProject').textContent = '—';
+        document.getElementById('insightBestRateVal').textContent = `${formatMoney(0)}/task`;
+        document.getElementById('insightCollectionRate').textContent = '0%';
+      } else {
+        let topEarner = projects[0];
+        let bestRateProj = projects[0];
+        projects.forEach(p => {
+          if (getExpectedPayout(p) > getExpectedPayout(topEarner)) topEarner = p;
+          if (getEffectiveRate(p) > getEffectiveRate(bestRateProj)) bestRateProj = p;
+        });
+
+        document.getElementById('insightTopEarner').textContent = topEarner.name;
+        document.getElementById('insightTopEarnerVal').textContent = formatMoney(getExpectedPayout(topEarner));
+
+        document.getElementById('insightBestRateProject').textContent = bestRateProj.name;
+        document.getElementById('insightBestRateVal').textContent = `${formatMoney(getEffectiveRate(bestRateProj))}/task`;
+
+        document.getElementById('insightCollectionRate').textContent = `${collectionPct}%`;
+      }
+
+      // Update Filter Counts
+      document.getElementById('count-ALL').textContent = projects.length;
+      document.getElementById('count-Active').textContent = projects.filter(p => p.status === 'Active').length;
+      document.getElementById('count-Pending Payout').textContent = projects.filter(p => p.status === 'Pending Payout').length;
+      document.getElementById('count-Paid').textContent = projects.filter(p => p.status === 'Paid').length;
+    }
+
+    // =========================================================================
+    // 6. CHARTS (CHART.JS)
+    // =========================================================================
+    function updateCharts() {
+      const isDark = state.theme === 'dark';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(15, 23, 42, 0.06)';
+      const tickColor = isDark ? '#94A3B8' : '#64748B';
+      const tooltipBg = isDark ? '#0F172A' : '#1E293B';
+
+      const labels = state.projects.map(p => p.name.length > 20 ? p.name.slice(0, 19) + '…' : p.name);
+      const fullNames = state.projects.map(p => p.name);
+      const receivedData = state.projects.map(p => Number(p.received) || 0);
+      const pendingData = state.projects.map(p => getPendingPayout(p));
+
+      // 1. Stacked Bar Chart: Received vs Pending Payout
+      const barCtx = document.getElementById('payoutBarChart').getContext('2d');
+      if (barChartInstance) {
+        barChartInstance.data.labels = labels;
+        barChartInstance.data.datasets[0].data = receivedData;
+        barChartInstance.data.datasets[1].data = pendingData;
+        barChartInstance.options.scales.x.ticks.color = tickColor;
+        barChartInstance.options.scales.y.ticks.color = tickColor;
+        barChartInstance.options.scales.y.grid.color = gridColor;
+        barChartInstance.options.plugins.tooltip.backgroundColor = tooltipBg;
+        barChartInstance.update();
+      } else {
+        barChartInstance = new Chart(barCtx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: 'Received',
+                data: receivedData,
+                backgroundColor: '#10B981',
+                hoverBackgroundColor: '#059669',
+                borderRadius: 6,
+                borderSkipped: false,
+                barPercentage: 0.58,
+                categoryPercentage: 0.75
+              },
+              {
+                label: 'Pending',
+                data: pendingData,
+                backgroundColor: '#F59E0B',
+                hoverBackgroundColor: '#D97706',
+                borderRadius: 6,
+                borderSkipped: false,
+                barPercentage: 0.58,
+                categoryPercentage: 0.75
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                padding: 11,
+                cornerRadius: 10,
+                titleFont: { family: '"Plus Jakarta Sans", sans-serif', size: 12, weight: '700' },
+                bodyFont: { family: '"JetBrains Mono", monospace', size: 12 },
+                callbacks: {
+                  title: (items) => {
+                    const idx = items[0]?.dataIndex ?? 0;
+                    return state.projects[idx]?.name || '';
+                  },
+                  label: (ctx) => ` ${ctx.dataset.label}: ${formatMoney(ctx.parsed.y)}`
+                }
+              }
+            },
+            scales: {
+              x: {
+                stacked: true,
+                grid: { display: false },
+                ticks: {
+                  color: tickColor,
+                  font: { family: '"Plus Jakarta Sans", sans-serif', size: 11, weight: '600' }
+                }
+              },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                border: { display: false },
+                grid: { color: gridColor },
+                ticks: {
+                  color: tickColor,
+                  font: { family: '"JetBrains Mono", monospace', size: 11 },
+                  callback: (val) => formatMoney(val, true)
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Doughnut Chart: Tasks vs Earnings Share
+      const doughnutCtx = document.getElementById('distributionDoughnutChart').getContext('2d');
+      const palette = ['#6366F1', '#10B981', '#F59E0B', '#EC4899', '#06B6D4', '#8B5CF6', '#F97316'];
+      const doughnutValues = state.chartMode === 'tasks'
+        ? state.projects.map(p => Number(p.tasks) || 0)
+        : state.projects.map(p => getExpectedPayout(p));
+
+      if (doughnutChartInstance) {
+        doughnutChartInstance.data.labels = fullNames;
+        doughnutChartInstance.data.datasets[0].data = doughnutValues;
+        doughnutChartInstance.data.datasets[0].borderColor = isDark ? '#111827' : '#FFFFFF';
+        doughnutChartInstance.options.plugins.legend.labels.color = tickColor;
+        doughnutChartInstance.options.plugins.tooltip.backgroundColor = tooltipBg;
+        doughnutChartInstance.update();
+      } else {
+        doughnutChartInstance = new Chart(doughnutCtx, {
+          type: 'doughnut',
+          data: {
+            labels: fullNames,
+            datasets: [{
+              data: doughnutValues,
+              backgroundColor: palette,
+              borderColor: isDark ? '#111827' : '#FFFFFF',
+              borderWidth: 3,
+              hoverOffset: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '66%',
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: {
+                  boxWidth: 10,
+                  boxHeight: 10,
+                  usePointStyle: true,
+                  pointStyle: 'circle',
+                  padding: 12,
+                  color: tickColor,
+                  font: { family: '"Plus Jakarta Sans", sans-serif', size: 11, weight: '600' },
+                  generateLabels: (chart) => {
+                    const data = chart.data;
+                    if (!data.labels.length) return [];
+                    return data.labels.map((label, i) => ({
+                      text: label.length > 16 ? label.slice(0, 15) + '…' : label,
+                      fillStyle: data.datasets[0].backgroundColor[i % palette.length],
+                      strokeStyle: 'transparent',
+                      index: i
+                    }));
+                  }
+                }
+              },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                padding: 11,
+                cornerRadius: 10,
+                titleFont: { family: '"Plus Jakarta Sans", sans-serif', size: 12, weight: '700' },
+                bodyFont: { family: '"JetBrains Mono", monospace', size: 12 },
+                callbacks: {
+                  label: (ctx) => {
+                    const val = ctx.parsed;
+                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                    const pct = total > 0 ? Math.round((val / total) * 100) : 0;
+                    const formatted = state.chartMode === 'tasks' ? `${val} tasks` : formatMoney(val);
+                    return ` ${formatted} (${pct}%)`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // =========================================================================
+    // 7. RENDER PROJECT CARDS GRID
+    // =========================================================================
+    function getFilteredAndSortedProjects() {
+      let list = [...state.projects];
+
+      if (state.filter !== 'ALL') {
+        list = list.filter(p => p.status === state.filter);
+      }
+
+      if (state.search.trim()) {
+        const q = state.search.trim().toLowerCase();
+        list = list.filter(p =>
+          p.name.toLowerCase().includes(q) ||
+          (p.notes && p.notes.toLowerCase().includes(q))
+        );
+      }
+
+      switch (state.sort) {
+        case 'pending':
+          list.sort((a, b) => getPendingPayout(b) - getPendingPayout(a));
+          break;
+        case 'tasks':
+          list.sort((a, b) => (Number(b.tasks) || 0) - (Number(a.tasks) || 0));
+          break;
+        case 'payout':
+          list.sort((a, b) => getExpectedPayout(b) - getExpectedPayout(a));
+          break;
+        case 'recent':
+        default:
+          list.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+          break;
+      }
+
+      return list;
+    }
+
+    function renderProjectsGrid(poppedProjectId = null) {
+      const grid = document.getElementById('projectsGrid');
+      const emptyState = document.getElementById('emptyState');
+      const filtered = getFilteredAndSortedProjects();
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      grid.innerHTML = filtered.map(project => {
+        const expected = getExpectedPayout(project);
+        const received = Math.max(0, Number(project.received) || 0);
+        const pending = getPendingPayout(project);
+        const paidPct = expected > 0 ? Math.min(100, Math.round((received / expected) * 100)) : (received > 0 ? 100 : 0);
+        const st = STATUS_STYLES[project.status] || STATUS_STYLES['Active'];
+
+        const pricingBadge = project.pricingType === 'per_task'
+          ? `${formatMoney(project.ratePerTask)} / task`
+          : `Fixed Payout`;
+
+        const popClass = poppedProjectId === project.id ? 'animate-pop' : '';
+
+        return `
+          <article data-id="${escapeHtml(project.id)}" class="group rounded-2xl p-5 sm:p-6 bg-white dark:bg-[#111827]/95 border border-slate-200/90 dark:border-white/[0.08] hover:border-indigo-500/40 dark:hover:border-indigo-500/40 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-5">
+            
+            <!-- Card Top: Title, Status Pill Selector & Action Icons -->
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center flex-wrap gap-2 mb-1.5">
+                  <!-- Interactive Status Dropdown Badge -->
+                  <div class="relative inline-flex items-center">
+                    <span class="w-2 h-2 rounded-full ${st.dot} absolute left-2.5 pointer-events-none"></span>
+                    <select aria-label="Change project status" onchange="handleStatusChange('${escapeHtml(project.id)}', this.value)"
+                      class="appearance-none cursor-pointer pl-6 pr-6 py-1 rounded-full text-[11px] font-semibold border ${st.badge} bg-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition">
+                      <option value="Active" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" ${project.status === 'Active' ? 'selected' : ''}>Active</option>
+                      <option value="Pending Payout" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" ${project.status === 'Pending Payout' ? 'selected' : ''}>Pending Payout</option>
+                      <option value="Paid" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" ${project.status === 'Paid' ? 'selected' : ''}>Paid</option>
+                      <option value="On Hold" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white" ${project.status === 'On Hold' ? 'selected' : ''}>On Hold</option>
+                    </select>
+                    <svg class="w-3 h-3 opacity-70 pointer-events-none absolute right-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+
+                  <!-- Pricing Mode Tag -->
+                  <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-medium bg-slate-100 dark:bg-slate-800/90 text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-white/[0.06]">
+                    ${pricingBadge}
+                  </span>
+                </div>
+
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug truncate" title="${escapeHtml(project.name)}">
+                  ${escapeHtml(project.name)}
+                </h3>
+              </div>
+
+              <!-- Edit & Delete Buttons -->
+              <div class="flex items-center gap-1 shrink-0">
+                <button type="button" onclick="openEditProjectModal('${escapeHtml(project.id)}')" title="Edit Project" aria-label="Edit Project"
+                  class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button type="button" onclick="confirmDeleteProject('${escapeHtml(project.id)}')" title="Delete Project" aria-label="Delete Project"
+                  class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Interactive Task Counter Control Center -->
+            <div class="rounded-xl p-3.5 bg-slate-50/90 dark:bg-[#0B0F19]/80 border border-slate-200/80 dark:border-white/[0.06] flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Tasks Completed</span>
+                <div class="flex items-baseline gap-2 mt-0.5">
+                  <button type="button" onclick="enableInlineTaskEdit('${escapeHtml(project.id)}', this)" title="Click to type exact task count"
+                    class="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition cursor-text ${popClass}">
+                    ${Number(project.tasks) || 0}
+                  </button>
+                  <span class="text-xs text-slate-400">tasks</span>
+                </div>
+              </div>
+
+              <!-- Tactile Quick Stepper Buttons (-1, +1, +5) -->
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="adjustProjectTasks('${escapeHtml(project.id)}', -1)" aria-label="Decrease tasks by 1"
+                  class="h-9 min-w-[38px] px-2.5 rounded-xl font-mono text-xs sm:text-sm font-bold bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 active:scale-95 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/[0.08] shadow-xs transition cursor-pointer">
+                  -1
+                </button>
+                <button type="button" onclick="adjustProjectTasks('${escapeHtml(project.id)}', 1)" aria-label="Increase tasks by 1"
+                  class="h-9 min-w-[44px] px-3 rounded-xl font-mono text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white shadow-sm shadow-indigo-600/25 transition cursor-pointer">
+                  +1
+                </button>
+                <button type="button" onclick="adjustProjectTasks('${escapeHtml(project.id)}', 5)" aria-label="Increase tasks by 5"
+                  class="h-9 min-w-[44px] px-3 rounded-xl font-mono text-xs sm:text-sm font-bold bg-indigo-500/15 hover:bg-indigo-500/25 active:scale-95 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 transition cursor-pointer">
+                  +5
+                </button>
+              </div>
+            </div>
+
+            <!-- Financial Breakdown & Progress Bar -->
+            <div class="space-y-3">
+              <div class="grid grid-cols-3 gap-2.5">
+                <!-- Expected Payout -->
+                <div class="rounded-xl p-2.5 bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/60 dark:border-white/[0.05]">
+                  <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Expected</span>
+                  <span class="text-sm sm:text-base font-bold font-mono tabular-nums text-slate-900 dark:text-white mt-0.5 block">
+                    ${formatMoney(expected)}
+                  </span>
+                </div>
+
+                <!-- Payout Received (Click to Edit Inline) -->
+                <div class="rounded-xl p-2.5 bg-emerald-500/[0.06] border border-emerald-500/20">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Received</span>
+                    <svg class="w-3 h-3 text-emerald-500/70" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </div>
+                  <button type="button" onclick="enableInlineReceivedEdit('${escapeHtml(project.id)}', this)" title="Click to edit amount received"
+                    class="text-sm sm:text-base font-bold font-mono tabular-nums text-emerald-600 dark:text-emerald-400 hover:underline mt-0.5 block text-left w-full cursor-text">
+                    ${formatMoney(received)}
+                  </button>
+                </div>
+
+                <!-- Pending Payout -->
+                <div class="rounded-xl p-2.5 ${pending > 0.009 ? 'bg-amber-500/[0.07] border-amber-500/25' : 'bg-slate-50/70 dark:bg-slate-800/40 border-slate-200/60 dark:border-white/[0.05]'} border">
+                  <span class="text-[10px] font-semibold uppercase tracking-wider ${pending > 0.009 ? 'text-amber-700 dark:text-amber-400' : 'text-slate-400'} block">Pending</span>
+                  <span class="text-sm sm:text-base font-bold font-mono tabular-nums ${pending > 0.009 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'} mt-0.5 block">
+                    ${formatMoney(pending)}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Paid vs Pending Progress Bar + Quick Settle CTA -->
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-[11px]">
+                  <span class="font-medium text-slate-500 dark:text-slate-400">
+                    Payout Collected: <strong class="font-mono text-slate-700 dark:text-slate-200">${paidPct}%</strong>
+                  </span>
+                  ${pending > 0.009 ? `
+                    <button type="button" onclick="markProjectFullyPaid('${escapeHtml(project.id)}')"
+                      class="font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 inline-flex items-center gap-1 transition cursor-pointer">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Mark Fully Paid
+                    </button>
+                  ` : `
+                    <span class="font-semibold text-emerald-600 dark:text-emerald-400 inline-flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Settled
+                    </span>
+                  `}
+                </div>
+                <div class="w-full h-2 rounded-full bg-amber-500/20 overflow-hidden flex">
+                  <div class="h-full bg-emerald-500 transition-all duration-300" style="width: ${paidPct}%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Editable Note Snippet -->
+            <div class="pt-3 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between gap-2">
+              <button type="button" onclick="enableInlineNoteEdit('${escapeHtml(project.id)}', this)" title="Click to edit note"
+                class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-left truncate flex-1 flex items-center gap-1.5 cursor-text">
+                <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                </svg>
+                <span class="truncate">${project.notes ? escapeHtml(project.notes) : '<em class="opacity-60">Add a quick note...</em>'}</span>
+              </button>
+            </div>
+
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderAll(poppedProjectId = null) {
+      renderKPIsAndInsights();
+      renderProjectsGrid(poppedProjectId);
+      updateCharts();
+    }
+
+    // =========================================================================
+    // 8. DIRECT CARD INTERACTIONS (TASKS, PAYMENTS, STATUS, NOTES)
+    // =========================================================================
+    window.adjustProjectTasks = function(id, delta) {
+      const project = state.projects.find(p => p.id === id);
+      if (!project) return;
+      const nextTasks = Math.max(0, (Number(project.tasks) || 0) + delta);
+      if (nextTasks === project.tasks && delta < 0) return;
+
+      project.tasks = nextTasks;
+      project.updatedAt = Date.now();
+      saveState();
+      renderAll(id);
+    };
+
+    window.enableInlineTaskEdit = function(id, btnEl) {
+      const project = state.projects.find(p => p.id === id);
+      if (!project) return;
+
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.min = '0';
+      input.step = '1';
+      input.value = project.tasks;
+      input.className = 'w-24 h-9 px-2 rounded-lg font-mono font-extrabold text-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-2 border-indigo-500 focus:outline-none';
+
+      let committed = false;
+      const commit = () => {
+        if (committed) return;
+        committed = true;
+        const val = Math.max(0, parseInt(input.value, 10) || 0);
+        project.tasks = val;
+        project.updatedAt = Date.now();
+        saveState();
+        renderAll(id);
+      };
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          commit();
+        } else if (e.key === 'Escape') {
+          committed = true;
+          renderProjectsGrid();
+        }
+      });
+      input.addEventListener('blur', commit);
+
+      btnEl.replaceWith(input);
+      input.focus();
+      input.select();
+    };
+
+    window.enableInlineReceivedEdit = function(id, btnEl) {
+      const project = state.projects.find(p => p.id === id);
+      if (!project) return;
+
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.min = '0';
+      input.step = '0.01';
+      input.value = Number(project.received) || 0;
+      input.className = 'w-full h-7 px-1.5 mt-0.5 rounded-md font-mono font-bold text-sm bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 border border-emerald-500 focus:outline-none';
+
+      let committed = false;
+      const commit = () => {
+        if (committed) return;
+        committed = true;
+        const val = Math.max(0, parseFloat(input.value) || 0);
+        project.received = val;
+        project.updatedAt = Date.now();
+        saveState();
+        renderAll();
+      };
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          commit();
+        } else if (e.key === 'Escape') {
+          committed = true;
+          renderProjectsGrid();
+        }
+      });
+      input.addEventListener('blur', commit);
+
+      btnEl.replaceWith(input);
+      input.focus();
+      input.select();
+    };
+
+    window.enableInlineNoteEdit = function(id, btnEl) {
+      const project = state.projects.find(p => p.id === id);
+      if (!project) return;
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = project.notes || '';
+      input.placeholder = 'Write a quick project note...';
+      input.className = 'w-full h-7 px-2 rounded-lg text-xs bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-white border border-indigo-500 focus:outline-none';
+
+      let committed = false;
+      const commit = () => {
+        if (committed) return;
+        committed = true;
+        project.notes = input.value.trim();
+        project.updatedAt = Date.now();
+        saveState();
+        renderProjectsGrid();
+      };
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          commit();
+        } else if (e.key === 'Escape') {
+          committed = true;
+          renderProjectsGrid();
+        }
+      });
+      input.addEventListener('blur', commit);
+
+      btnEl.replaceWith(input);
+      input.focus();
+    };
+
+    window.handleStatusChange = function(id, newStatus) {
+      const project = state.projects.find(p => p.id === id);
+      if (!project) return;
+      project.status = newStatus;
+      project.updatedAt = Date.now();
+      saveState();
+      renderAll();
+      showToast(`Status updated to "${newStatus}"`, 'info');
+    };
+
+    window.markProjectFullyPaid = function(id) {
+      const project = state.projects.find(p => p.id === id);
+      if (!project) return;
+      project.received = getExpectedPayout(project);
+      project.status = 'Paid';
+      project.updatedAt = Date.now();
+      saveState();
+      renderAll();
+      showToast(`Marked "${project.name}" as fully paid!`, 'success');
+    };
+
+    window.confirmDeleteProject = function(id) {
+      const project = state.projects.find(p => p.id === id);
+      if (!project) return;
+      openConfirm(
+        'Delete Project',
+        `Are you sure you want to remove "${project.name}"? This action cannot be undone.`,
+        () => {
+          state.projects = state.projects.filter(p => p.id !== id);
+          saveState();
+          renderAll();
+          showToast('Project deleted', 'info');
+        }
+      );
+    };
+
+    // =========================================================================
+    // 9. ADD / EDIT PROJECT MODAL LOGIC
+    // =========================================================================
+    function setModalPricingMode(mode) {
+      modalPricingMode = mode;
+      const perTaskBtn = document.getElementById('pricingPerTaskBtn');
+      const fixedBtn = document.getElementById('pricingFixedBtn');
+      const rateGroup = document.getElementById('rateInputGroup');
+      const fixedGroup = document.getElementById('fixedInputGroup');
+
+      if (mode === 'per_task') {
+        perTaskBtn.className = 'py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm';
+        fixedBtn.className = 'py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+        rateGroup.classList.remove('hidden');
+        fixedGroup.classList.add('hidden');
+      } else {
+        fixedBtn.className = 'py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm';
+        perTaskBtn.className = 'py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+        fixedGroup.classList.remove('hidden');
+        rateGroup.classList.add('hidden');
+      }
+      updateModalPreview();
+    }
+
+    function getModalCalculatedExpected() {
+      const tasks = Math.max(0, parseInt(document.getElementById('projectTasksInput').value, 10) || 0);
+      if (modalPricingMode === 'per_task') {
+        const rate = Math.max(0, parseFloat(document.getElementById('projectRateInput').value) || 0);
+        return tasks * rate;
+      }
+      return Math.max(0, parseFloat(document.getElementById('projectFixedInput').value) || 0);
+    }
+
+    function updateModalPreview() {
+      const expected = getModalCalculatedExpected();
+      const received = Math.max(0, parseFloat(document.getElementById('projectReceivedInput').value) || 0);
+      const pending = Math.max(0, expected - received);
+
+      document.getElementById('modalPreviewExpected').textContent = formatMoney(expected);
+      document.getElementById('modalPreviewPending').textContent = formatMoney(pending);
+    }
+
+    function openNewProjectModal() {
+      document.getElementById('modalTitle').textContent = 'New Project';
+      document.getElementById('editProjectId').value = '';
+      document.getElementById('projectNameInput').value = '';
+      document.getElementById('projectTasksInput').value = '0';
+      document.getElementById('projectRateInput').value = '';
+      document.getElementById('projectFixedInput').value = '';
+      document.getElementById('projectReceivedInput').value = '0';
+      document.getElementById('projectStatusInput').value = 'Active';
+      document.getElementById('projectNotesInput').value = '';
+      document.getElementById('nameErrorMsg').classList.add('hidden');
+
+      setModalPricingMode('per_task');
+      updateModalPreview();
+
+      const modal = document.getElementById('projectModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => document.getElementById('projectNameInput').focus(), 40);
+    }
+
+    window.openEditProjectModal = function(id) {
+      const project = state.projects.find(p => p.id === id);
+      if (!project) return;
+
+      document.getElementById('modalTitle').textContent = 'Edit Project';
+      document.getElementById('editProjectId').value = project.id;
+      document.getElementById('projectNameInput').value = project.name;
+      document.getElementById('projectTasksInput').value = project.tasks;
+      document.getElementById('projectRateInput').value = project.ratePerTask || '';
+      document.getElementById('projectFixedInput').value = project.fixedPayout || '';
+      document.getElementById('projectReceivedInput').value = project.received || 0;
+      document.getElementById('projectStatusInput').value = project.status;
+      document.getElementById('projectNotesInput').value = project.notes || '';
+      document.getElementById('nameErrorMsg').classList.add('hidden');
+
+      setModalPricingMode(project.pricingType || 'per_task');
+      updateModalPreview();
+
+      const modal = document.getElementById('projectModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    function closeProjectModal() {
+      const modal = document.getElementById('projectModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // =========================================================================
+    // 10. EXPORT CSV & JSON
+    // =========================================================================
+    function downloadFile(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportToCSV() {
+      const headers = [
+        'Project Name',
+        'Status',
+        'Pricing Mode',
+        'Tasks Completed',
+        `Rate Per Task (${state.currency})`,
+        `Expected Payout (${state.currency})`,
+        `Payout Received (${state.currency})`,
+        `Pending Payout (${state.currency})`,
+        'Notes'
+      ];
+
+      const rows = state.projects.map(p => [
+        `"${(p.name || '').replace(/"/g, '""')}"`,
+        `"${p.status}"`,
+        `"${p.pricingType === 'per_task' ? 'Per-Task Rate' : 'Fixed Payout'}"`,
+        Number(p.tasks) || 0,
+        p.pricingType === 'per_task' ? (Number(p.ratePerTask) || 0).toFixed(2) : '',
+        getExpectedPayout(p).toFixed(2),
+        (Number(p.received) || 0).toFixed(2),
+        getPendingPayout(p).toFixed(2),
+        `"${(p.notes || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      downloadFile(`project-payout-tracker-${dateStr}.csv`, csvContent, 'text/csv;charset=utf-8;');
+      showToast('Exported CSV spreadsheet', 'success');
+    }
+
+    function exportToJSON() {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        currency: state.currency,
+        projects: state.projects
+      };
+      const dateStr = new Date().toISOString().slice(0, 10);
+      downloadFile(`project-payout-tracker-${dateStr}.json`, JSON.stringify(payload, null, 2), 'application/json');
+      showToast('Exported JSON backup', 'success');
+    }
+
+    // =========================================================================
+    // 11. EVENT LISTENERS & INITIALIZATION
+    // =========================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+
+      // Sync UI controls with loaded state
+      const currencySelect = document.getElementById('currencySelect');
+      currencySelect.value = state.currency;
+      updateCurrencySymbols();
+      applyTheme();
+
+      // Sync Doughnut Mode Buttons
+      updateDoughnutModeButtons();
+
+      // Initial render
+      renderAll();
+
+      // Currency Switcher
+      currencySelect.addEventListener('change', (e) => {
+        state.currency = e.target.value;
+        updateCurrencySymbols();
+        saveState();
+        renderAll();
+        updateModalPreview();
+        showToast(`Currency switched to ${state.currency}`, 'info');
+      });
+
+      // Theme Toggle
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        state.theme = state.theme === 'dark' ? 'light' : 'dark';
+        saveState();
+        applyTheme();
+      });
+
+      // Exports
+      document.getElementById('exportCsvBtn').addEventListener('click', exportToCSV);
+      document.getElementById('exportJsonBtn').addEventListener('click', exportToJSON);
+
+      // Doughnut Mode Switcher
+      function updateDoughnutModeButtons() {
+        const tasksBtn = document.getElementById('modeTasksBtn');
+        const earningsBtn = document.getElementById('modeEarningsBtn');
+        const sub = document.getElementById('doughnutSubtitle');
+        if (state.chartMode === 'tasks') {
+          tasksBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm';
+          earningsBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+          sub.textContent = 'Share of completed tasks across projects';
+        } else {
+          earningsBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm';
+          tasksBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+          sub.textContent = 'Share of expected revenue across projects';
+        }
+      }
+
+      document.getElementById('modeTasksBtn').addEventListener('click', () => {
+        state.chartMode = 'tasks';
+        updateDoughnutModeButtons();
+        saveState();
+        updateCharts();
+      });
+
+      document.getElementById('modeEarningsBtn').addEventListener('click', () => {
+        state.chartMode = 'earnings';
+        updateDoughnutModeButtons();
+        saveState();
+        updateCharts();
+      });
+
+      // Filter Pills
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.filter = btn.dataset.filter;
+          document.querySelectorAll('.filter-pill').forEach(b => {
+            if (b.dataset.filter === state.filter) {
+              b.className = 'filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer bg-indigo-600 text-white shadow-sm';
+            } else {
+              b.className = 'filter-pill px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700/80';
+            }
+          });
+          renderProjectsGrid();
+        });
+      });
+
+      // Search & Sort
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        state.search = e.target.value;
+        renderProjectsGrid();
+      });
+
+      document.getElementById('sortSelect').addEventListener('change', (e) => {
+        state.sort = e.target.value;
+        renderProjectsGrid();
+      });
+
+      // New Project Modal Triggers
+      document.getElementById('openNewProjectBtn').addEventListener('click', openNewProjectModal);
+      document.getElementById('emptyNewProjectBtn').addEventListener('click', openNewProjectModal);
+      document.getElementById('closeModalBtn').addEventListener('click', closeProjectModal);
+      document.getElementById('cancelModalBtn').addEventListener('click', closeProjectModal);
+
+      // Modal Pricing Mode Toggle
+      document.getElementById('pricingPerTaskBtn').addEventListener('click', () => setModalPricingMode('per_task'));
+      document.getElementById('pricingFixedBtn').addEventListener('click', () => setModalPricingMode('fixed'));
+
+      // Modal Task Steppers & Live Preview Inputs
+      document.getElementById('modalTaskMinus').addEventListener('click', () => {
+        const inp = document.getElementById('projectTasksInput');
+        inp.value = Math.max(0, (parseInt(inp.value, 10) || 0) - 1);
+        updateModalPreview();
+      });
+      document.getElementById('modalTaskPlus').addEventListener('click', () => {
+        const inp = document.getElementById('projectTasksInput');
+        inp.value = Math.max(0, (parseInt(inp.value, 10) || 0) + 1);
+        updateModalPreview();
+      });
+
+      ['projectTasksInput', 'projectRateInput', 'projectFixedInput', 'projectReceivedInput'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateModalPreview);
+      });
+
+      document.getElementById('fillFullReceivedBtn').addEventListener('click', () => {
+        const expected = getModalCalculatedExpected();
+        document.getElementById('projectReceivedInput').value = expected.toFixed(2);
+        updateModalPreview();
+      });
+
+      // Save Project Form Submit
+      document.getElementById('projectForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById('projectNameInput');
+        const name = nameInput.value.trim();
+        if (!name) {
+          document.getElementById('nameErrorMsg').classList.remove('hidden');
+          nameInput.focus();
+          return;
+        }
+
+        const editId = document.getElementById('editProjectId').value;
+        const tasks = Math.max(0, parseInt(document.getElementById('projectTasksInput').value, 10) || 0);
+        const ratePerTask = Math.max(0, parseFloat(document.getElementById('projectRateInput').value) || 0);
+        const fixedPayout = Math.max(0, parseFloat(document.getElementById('projectFixedInput').value) || 0);
+        const received = Math.max(0, parseFloat(document.getElementById('projectReceivedInput').value) || 0);
+        const status = document.getElementById('projectStatusInput').value;
+        const notes = document.getElementById('projectNotesInput').value.trim();
+
+        if (editId) {
+          const idx = state.projects.findIndex(p => p.id === editId);
+          if (idx !== -1) {
+            state.projects[idx] = {
+              ...state.projects[idx],
+              name,
+              pricingType: modalPricingMode,
+              ratePerTask,
+              fixedPayout,
+              tasks,
+              received,
+              status,
+              notes,
+              updatedAt: Date.now()
+            };
+          }
+          showToast(`Updated "${name}"`, 'success');
+        } else {
+          const newProj = {
+            id: 'proj-' + Date.now(),
+            name,
+            pricingType: modalPricingMode,
+            ratePerTask,
+            fixedPayout,
+            tasks,
+            received,
+            status,
+            notes,
+            updatedAt: Date.now()
+          };
+          state.projects.unshift(newProj);
+          showToast(`Added "${name}"`, 'success');
+        }
+
+        saveState();
+        closeProjectModal();
+        renderAll();
+      });
+
+      // Confirm Dialog Buttons
+      document.getElementById('confirmCancelBtn').addEventListener('click', closeConfirm);
+      document.getElementById('confirmProceedBtn').addEventListener('click', () => {
+        if (typeof confirmCallback === 'function') confirmCallback();
+        closeConfirm();
+      });
+
+      // Reset Sample Data
+      document.getElementById('resetSampleBtn').addEventListener('click', () => {
+        openConfirm(
+          'Reset Sample Data',
+          'This will replace your current projects with the 4 sample demo projects. Do you want to continue?',
+          () => {
+            state.projects = JSON.parse(JSON.stringify(SAMPLE_PROJECTS));
+            saveState();
+            renderAll();
+            showToast('Sample projects restored', 'info');
+          }
+        );
+      });
+
+      // Close modals on backdrop click or Escape key
+      ['projectModal', 'confirmModal'].forEach(modalId => {
+        document.getElementById(modalId).addEventListener('click', (e) => {
+          if (e.target.id === modalId) {
+            modalId === 'projectModal' ? closeProjectModal() : closeConfirm();
+          }
+        });
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeProjectModal();
+          closeConfirm();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
