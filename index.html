@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Work Log – projects, tasks &amp; payouts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f5fa;--panel:#fff;--ink:#101a33;--mute:#5d6985;--line:#dfe5f0;--brand:#3454ff;--brand-soft:#e6ebff;--gain:#0b8a5f;--gain-soft:#dcf5ea;--bar2:#b9c5ff;--danger:#c2312d;
+--display:'Sora','Segoe UI',system-ui,sans-serif;--body:'DM Sans','Segoe UI',system-ui,sans-serif;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1324;--panel:#151d33;--ink:#e9eeff;--mute:#9aa6c6;--line:#26304d;--brand:#7c93ff;--brand-soft:#212c57;--gain:#3fd6a0;--gain-soft:#12362e;--bar2:#33417a;--danger:#ff8a85;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1324;--panel:#151d33;--ink:#e9eeff;--mute:#9aa6c6;--line:#26304d;--brand:#7c93ff;--brand-soft:#212c57;--gain:#3fd6a0;--gain-soft:#12362e;--bar2:#33417a;--danger:#ff8a85;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 18px 64px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+h1{font:700 26px/1.15 var(--display);margin:0 0 4px;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0}
+select,input{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.hero{background:var(--brand);color:#fff;border-radius:22px;padding:26px 28px;display:grid;grid-template-columns:1.1fr 1.4fr;gap:26px;margin-bottom:18px}
+:root[data-theme="dark"] .hero,:root:not([data-theme="light"]) .hero{--hero-on:#0d1324}
+.hero .lbl{opacity:.8;font-size:14px}
+.big{font:700 clamp(38px,7vw,60px)/1.05 var(--display);letter-spacing:-.03em;margin:6px 0 14px;word-break:break-word}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,.16);border-radius:12px;padding:8px 12px;font-size:13px}
+.chip b{display:block;font:600 18px var(--display)}
+.chartbox h2{font:600 14px var(--display);margin:0 0 6px;opacity:.9}
+#chart{width:100%;height:auto;display:block}
+#chart text{fill:#fff;font:500 11px var(--body)}
+.grid{display:grid;grid-template-columns:1fr 1.2fr;gap:18px;margin-bottom:18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}
+.panel h2{font:600 16px var(--display);margin:0 0 14px}
+form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+form label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--mute);font-weight:500}
+form .full{grid-column:1/-1}
+button{font:600 15px var(--body);border:0;border-radius:10px;padding:12px 16px;cursor:pointer;background:var(--brand);color:#fff}
+:root[data-theme="dark"] button.primary,:root:not([data-theme="light"]) button.primary{color:#0d1324}
+button.ghost{background:transparent;color:var(--mute);border:1px solid var(--line);padding:8px 12px;font-size:13px}
+button.ghost:hover{color:var(--ink)}
+.proj{display:grid;grid-template-columns:minmax(80px,1.1fr) 2fr auto;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.proj:first-of-type{border-top:0}
+.proj .n{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{height:10px;background:var(--brand-soft);border-radius:99px;overflow:hidden}
+.fill{height:100%;background:var(--brand);border-radius:99px}
+.proj .v{text-align:right;font-variant-numeric:tabular-nums;font-size:13px;color:var(--mute)}
+.proj .v b{display:block;color:var(--ink);font-size:15px}
+.tools{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.tools h2{margin:0}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{text-align:left;font-weight:500;font-size:13px;color:var(--mute);padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;border-bottom:1px solid var(--line)}
+td.r,th.r{text-align:right}
+.pay{color:var(--gain);font-weight:600}
+.del{background:none;border:0;color:var(--mute);cursor:pointer;padding:4px 8px;font-size:18px;line-height:1}
+.del:hover{color:var(--danger)}
+.empty{text-align:center;color:var(--mute);padding:26px 10px}
+.empty button{margin-top:10px}
+.foot{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:14px}
+#status{color:var(--mute);font-size:12px}
+@media (max-width:760px){.hero,.grid{grid-template-columns:1fr}.hero{padding:22px 20px}}
+@media (prefers-reduced-motion:no-preference){.fill{transition:width .5s ease}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>Work log</h1>
+    <p class="sub">Add an entry each time you finish a task. Your totals and weekly chart update on their own.</p>
+  </div>
+  <label class="sub">Currency
+    <select id="cur" aria-label="Currency">
+      <option value="$">$ US dollar</option><option value="৳">৳ Taka</option><option value="€">€ Euro</option><option value="£">£ Pound</option>
+    </select>
+  </label>
+</header>
+
+<section class="hero" aria-label="Summary">
+  <div>
+    <div class="lbl">Total earned</div>
+    <div class="big" id="total">0</div>
+    <div class="chips">
+      <div class="chip"><b id="s-tasks">0</b>tasks done</div>
+      <div class="chip"><b id="s-proj">0</b>projects</div>
+      <div class="chip"><b id="s-avg">0</b>per task</div>
+      <div class="chip"><b id="s-week">0</b>this week</div>
+    </div>
+  </div>
+  <div class="chartbox">
+    <h2>Payout per week</h2>
+    <svg id="chart" viewBox="0 0 560 190" role="img" aria-label="Weekly payout bar chart"></svg>
+  </div>
+</section>
+
+<div class="grid">
+  <section class="panel">
+    <h2>Add an entry</h2>
+    <form id="f">
+      <label class="full">Project name<input id="p" list="plist" required maxlength="60" placeholder="e.g. Logo design for Nova Café" autocomplete="off"><datalist id="plist"></datalist></label>
+      <label>Date<input id="d" type="date" required></label>
+      <label>Tasks completed<input id="t" type="number" min="0" step="1" value="1" required inputmode="numeric"></label>
+      <label class="full">Payout<input id="a" type="number" min="0" step="0.01" required inputmode="decimal" placeholder="0.00"></label>
+      <button class="primary full" type="submit">Save entry</button>
+    </form>
+  </section>
+  <section class="panel">
+    <h2>Where the money comes from</h2>
+    <div id="projects"></div>
+  </section>
+</div>
+
+<section class="panel">
+  <div class="tools">
+    <h2>All entries</h2>
+    <select id="flt" aria-label="Filter by project"><option value="">All projects</option></select>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Date</th><th>Project</th><th class="r">Tasks</th><th class="r">Payout</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <div class="foot"><span id="status"></span><button class="ghost" id="sample" type="button">Load sample data</button><button class="ghost" id="clear" type="button">Clear all</button></div>
+</section>
+</div>
+
+<script>
+(function(){
+var S={entries:[],cur:'$'}, LS='worklog.v1', $=function(i){return document.getElementById(i)};
+var docRef=null;
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function money(n){var d=Math.abs(n-Math.round(n))<.005?0:2;return S.cur+Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:2})}
+function today(){var t=new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')}
+function wk(ds){var d=new Date(ds+'T00:00:00');var day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fmtD(ds){return new Date(ds+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
+function short(ds){return new Date(ds+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'})}
+function save(){
+  try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}
+  if(docRef){docRef.set({entries:S.entries,cur:S.cur}).then(function(){$('status').textContent='Saved'}).catch(function(){$('status').textContent='Saved on this device only'})}
+}
+function render(){
+  var E=S.entries.slice().sort(function(a,b){return a.date<b.date?1:a.date>b.date?-1:(b.id||0)-(a.id||0)});
+  var tot=0,tk=0,byP={},byW={};
+  E.forEach(function(e){tot+=e.pay;tk+=e.tasks;var p=byP[e.project]||(byP[e.project]={pay:0,tasks:0});p.pay+=e.pay;p.tasks+=e.tasks;var w=wk(e.date);byW[w]=(byW[w]||0)+e.pay});
+  var names=Object.keys(byP).sort(function(a,b){return byP[b].pay-byP[a].pay});
+  $('cur').value=S.cur;
+  $('total').textContent=money(tot);
+  $('s-tasks').textContent=tk;
+  $('s-proj').textContent=names.length;
+  $('s-avg').textContent=tk?money(tot/tk):money(0);
+  $('s-week').textContent=money(byW[wk(today())]||0);
+  // chart: last 8 weeks
+  var weeks=[],base=new Date(wk(today())+'T00:00:00');
+  for(var i=7;i>=0;i--){var d=new Date(base);d.setDate(d.getDate()-7*i);var k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');weeks.push(k)}
+  var max=Math.max.apply(null,weeks.map(function(k){return byW[k]||0}).concat([1])),h='';
+  weeks.forEach(function(k,i){
+    var v=byW[k]||0,bh=Math.round(v/max*125),x=14+i*68,cur=i===7;
+    h+='<g><title>Week of '+short(k)+': '+esc(money(v))+'</title>'
+     +'<rect x="'+x+'" y="'+(145-Math.max(bh,v?3:0))+'" width="52" height="'+Math.max(bh,v?3:0)+'" rx="8" fill="#fff" opacity="'+(cur?1:.55)+'"/>'
+     +(v?'<text x="'+(x+26)+'" y="'+(139-bh)+'" text-anchor="middle">'+esc(money(v))+'</text>':'')
+     +'<text x="'+(x+26)+'" y="168" text-anchor="middle" opacity=".85">'+short(k)+'</text></g>';
+  });
+  $('chart').innerHTML='<line x1="8" x2="552" y1="146" y2="146" stroke="#fff" opacity=".3"/>'+h;
+  // projects
+  var maxP=names.length?byP[names[0]].pay:1;
+  $('projects').innerHTML=names.length?names.map(function(n){var p=byP[n];
+    return '<div class="proj"><div class="n" title="'+esc(n)+'">'+esc(n)+'</div><div class="track"><div class="fill" style="width:'+(maxP?Math.max(p.pay/maxP*100,2):0)+'%"></div></div>'
+     +'<div class="v"><b>'+esc(money(p.pay))+'</b>'+p.tasks+' task'+(p.tasks===1?'':'s')+(p.tasks?' · '+esc(money(p.pay/p.tasks))+' each':'')+'</div></div>'}).join('')
+   :'<div class="empty">Your projects will rank here by how much each one paid.</div>';
+  // datalist + filter
+  $('plist').innerHTML=names.map(function(n){return '<option value="'+esc(n)+'">'}).join('');
+  var f=$('flt'),cv=f.value;
+  f.innerHTML='<option value="">All projects</option>'+names.map(function(n){return '<option value="'+esc(n)+'">'+esc(n)+'</option>'}).join('');
+  f.value=names.indexOf(cv)>-1?cv:'';
+  // rows
+  var shown=E.filter(function(e){return !f.value||e.project===f.value});
+  $('rows').innerHTML=shown.length?shown.map(function(e){
+    return '<tr><td>'+fmtD(e.date)+'</td><td>'+esc(e.project)+'</td><td class="r">'+e.tasks+'</td><td class="r pay">'+esc(money(e.pay))+'</td>'
+     +'<td class="r"><button class="del" data-id="'+e.id+'" aria-label="Delete entry">×</button></td></tr>'}).join('')
+   :'<tr><td colspan="5"><div class="empty">No entries yet. Add your first one above, or <button class="ghost" type="button" id="sample2">see it with sample data</button></div></td></tr>';
+  var s2=$('sample2');if(s2)s2.onclick=sample;
+}
+function sample(){
+  var P=[['Brand identity – Nova Café',[[2,5,320],[0,4,180]]],['Website copywriting',[[1,6,95],[3,3,140],[5,4,110]]],['Mobile app UI kit',[[4,8,450],[6,5,260]]],['Weekly newsletter',[[0,1,60],[2,1,60],[5,1,60]]]];
+  var b=new Date(wk(today())+'T00:00:00'),id=Date.now();
+  P.forEach(function(p){p[1].forEach(function(r){
+    var wkAgo=r[0],d=new Date(b);d.setDate(d.getDate()-7*Math.floor(wkAgo/2)-(wkAgo%2?2:0));if(d>new Date())d=new Date();
+    S.entries.push({id:id++,project:p[0],date:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),tasks:r[1],pay:r[2]})})});
+  save();render();
+}
+$('f').addEventListener('submit',function(ev){
+  ev.preventDefault();
+  var pr=$('p').value.trim(),d=$('d').value,t=parseInt($('t').value,10),a=parseFloat($('a').value);
+  if(!pr||!d||isNaN(t)||isNaN(a))return;
+  S.entries.push({id:Date.now(),project:pr,date:d,tasks:t,pay:a});
+  $('p').value='';$('a').value='';$('t').value='1';
+  save();render();$('p').focus();
+});
+$('rows').addEventListener('click',function(ev){
+  var b=ev.target.closest('.del');if(!b)return;
+  var id=Number(b.getAttribute('data-id'));
+  S.entries=S.entries.filter(function(e){return e.id!==id});save();render();
+});
+$('cur').addEventListener('change',function(){S.cur=this.value;save();render()});
+$('flt').addEventListener('change',render);
+$('sample').addEventListener('click',sample);
+$('clear').addEventListener('click',function(){
+  if(!S.entries.length)return;
+  if(this.getAttribute('data-sure')){S.entries=[];this.removeAttribute('data-sure');this.textContent='Clear all';save();render();return}
+  this.setAttribute('data-sure','1');this.textContent='Tap again to confirm';
+  var me=this;setTimeout(function(){me.removeAttribute('data-sure');me.textContent='Clear all'},3500);
+});
+$('d').value=today();
+try{var raw=localStorage.getItem(LS);if(raw){var o=JSON.parse(raw);if(o&&o.entries){S=o}}}catch(e){}
+render();
+// cloud copy so the log follows you across devices
+(async function(){
+  try{
+    if(!window.claude||!claude.use)return;
+    var user=await claude.use('user'),db=await claude.use('db');
+    if(!user||!db)return;
+    var id=await user.id();if(!id)return;
+    docRef=db.collection('data/users/'+id).doc('worklog');
+    var snap=await docRef.get();
+    if(snap.exists){var o=snap.data();if(o&&Array.isArray(o.entries)){S={entries:o.entries,cur:o.cur||'$'};try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}render()}}
+    else if(S.entries.length){save()}
+    $('status').textContent='Synced';
+  }catch(e){}
+})();
+})();
+</script>
+</body>
+</html>
